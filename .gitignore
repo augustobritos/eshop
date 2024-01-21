@@ -1,0 +1,9 @@
+# Ignore IDE-specific files
+.vscode/
+
+# Ignore JavaScript build output
+/dist/
+
+# Ignore Node Modules
+node_modules/
+
