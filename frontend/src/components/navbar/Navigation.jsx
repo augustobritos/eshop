@@ -1,11 +1,9 @@
-import { FaTasks, FaPlusCircle } from "react-icons/fa";
-
+import { FaTasks, FaPlusCircle, FaShoppingBasket } from "react-icons/fa";
 
 export const publicRoutes = [
   {
     name: "Productos",
     path: "/products",
-    icon: <FaTasks />,
   },
   {
     name: "Nosotros",
@@ -14,6 +12,11 @@ export const publicRoutes = [
   {
     name: "Contacto",
     path: "/contact",
+  },
+  {
+    name: "",
+    path: "/cart",
+    icon: <FaShoppingBasket />,
   },
 ];
 

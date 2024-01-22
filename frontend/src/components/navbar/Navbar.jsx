@@ -54,7 +54,7 @@ function Navbar() {
                 </li>
               </>
             ) : (
-              publicRoutes.map(({ name, path }) => (
+              publicRoutes.map(({ name, path, icon }) => (
                 <li
                   key={path}
                   className={
@@ -63,7 +63,7 @@ function Navbar() {
                       : "text-slate-950 items-center flex px-4 py-2 gap-x-2"
                   }
                 >
-                  <Link to={path}>{name}</Link>
+                  <Link to={path}>{name}{icon}</Link>
                 </li>
               ))
             )}

@@ -10,5 +10,3 @@ export const updateProductRequest = (id, product) => axios.put(`/products/${id}`
 
 export const deleteProductRequest = (id) => axios.delete(`/product/${id}`);
 
-
-export const uploadImage = (img) => axios.put("/url", img);

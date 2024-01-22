@@ -4,6 +4,7 @@ import express from "express";
 // Routes
 import productRoutes from "./router/products.routes.js";
 import authRoutes from "./router/auth.routes.js";
+import s3Routes from "./router/s3.routes.js";
 
 // Libraries
 import morgan from "morgan";
@@ -46,6 +47,7 @@ app.get("/api/ping", async(req, res) => {
 // Mount routes
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
+app.use("/api/s3", s3Routes);
 
 // Middleware for error for handling internal server errors
 app.use((err, req, res, next) => {

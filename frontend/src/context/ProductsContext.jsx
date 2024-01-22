@@ -7,6 +7,11 @@ import {
   deleteProductRequest,
 } from "../api/products.api";
 
+import {
+  getSignedUrlRequest,
+  uploadFileToSignedUrlRequest,
+} from "../api/upload.api";
+
 const ProductsContext = createContext();
 
 export const useProducts = () => {
@@ -76,7 +81,23 @@ export const ProductsProvider = ({ children }) => {
       console.error(error.message);
     }
   };
-  
+
+  const fileUpload = async (file) => {
+    const content_type = file.type;
+    const key = `products/${file.name}`;
+
+    const response = await getSignedUrlRequest({ key, content_type });
+    
+    await uploadFileToSignedUrlRequest(
+      response.data.signedUrl,
+      file,
+      content_type,
+      null,
+      () =>{}
+    );
+
+    return response.data.fileLink;
+  };
 
   return (
     <ProductsContext.Provider
@@ -87,6 +108,7 @@ export const ProductsProvider = ({ children }) => {
         createProduct,
         updateProduct,
         deleteProduct,
+        fileUpload,
         errors,
       }}
     >

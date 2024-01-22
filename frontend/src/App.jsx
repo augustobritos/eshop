@@ -14,6 +14,7 @@ import SignUp from "./components/admin/SignUp";
 import SignIn from "./components/admin/SignIn";
 import Profile from "./components/admin/Profile";
 import Products from "./components/pages/Products";
+import Cart from "./components/pages/Cart";
 import ProductForm from "./components/admin/ProductForm";
 import NotFound from "./components/pages/NotFound";
 
@@ -31,7 +32,9 @@ function App() {
       <Container className="py-5">
         <Routes>
           <Route
-            element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/signin" />}
+            element={
+              <ProtectedRoute isAllowed={!isAuth} redirectTo="/signin" />
+            }
           >
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn />} />
@@ -56,15 +59,15 @@ function App() {
           </Route>
           <Route path="/" element={<Home />} />
           <Route
-              element={
-                <ProductsProvider>
-                  <Outlet />
-                </ProductsProvider>
-              }
-            >
-              
+            element={
+              <ProductsProvider>
+                <Outlet />
+              </ProductsProvider>
+            }
+          >
             <Route path="/products" element={<Products />} />
-            </Route>
+          </Route>
+          <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />

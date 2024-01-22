@@ -1,5 +1,6 @@
 import pool from "../db.js";
 
+
 const getProducts = async (req, res) => {
   const result = await pool.query("SELECT * FROM products");
   return res.json(result.rows);
@@ -18,12 +19,12 @@ const getProductById = async (req, res) => {
 };
 
 const createProduct = async (req, res, next) => {
-  const { title, description, price } = req.body;
+  const { title, description, price, image } = req.body;
 
   try {
     const result = await pool.query(
-      "INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING *",
-      [title, description, price]
+      "INSERT INTO products (title, description, price, image) VALUES ($1, $2, $3, $4) RETURNING *",
+      [title, description, price, image]
     );
     res.json(result.rows[0]);
   } catch (error) {
@@ -65,4 +66,10 @@ const deleteProduct = async (req, res) => {
   return res.sendStatus(204);
 };
 
-export { getProducts, getProductById, createProduct, updateProduct, deleteProduct };
+export {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+};

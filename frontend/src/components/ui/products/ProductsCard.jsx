@@ -1,24 +1,64 @@
 import { Card, Button } from "../Index";
-import { useNavigate } from "react-router-dom";
 
+let cart = [];
 function ProductsCard({ product }) {
-  const navigate = useNavigate();
+  const onAddToCart = () => {
+    function addToCart(product) {
+      // Check if the product already exists in the cart
+      const existingProductIndex = cart.findIndex(
+        (item) => item.id === product.id
+      );
+
+      if (existingProductIndex >= 0) {
+        // Increment the quantity of the existing product
+        cart[existingProductIndex].quantity++;
+      } else {
+        // If the product does not exist, add it to the cart with a quantity of 1
+        cart.push({ ...product, quantity: 1 });
+      }
+
+      console.log(`Product ${product.title} added to cart.`);
+    }
+
+    function viewCart() {
+      console.log("Items in cart:");
+      cart.forEach((item) => {
+        console.log(
+          `Title: ${item.title}, Price: ${item.price}, Quantity: ${item.quantity}`
+        );
+      });
+    }
+
+    const selectedProduct = { id: product.id, title: product.title, price: product.price };
+
+    addToCart(selectedProduct);
+    viewCart();
+  };
+
   return (
-    <Card key={product.id} className="py-4 px-7 justify-center flex flex-col">
-      <div>
-        <h1 className="text-2xl font-bold">{product.title}</h1>
-        <img src="/default-product-image.png"/>
-        <p className="py-4 overflow-hidden">{product.description}</p>
-        <p className="py-4 overflow-hidden">{product.price}</p>
+    <Card
+      key={product.id}
+      className="py-10 px-7 flex flex-col items-center justify-center border border-solid border-green-500"
+    >
+      <div className="mx-auto">
+        <h1 className="flex justify-center items-center text-2xl font-semibold">
+          {product.title}
+        </h1>
+
+        <img
+          src={product.image}
+          className="object-contain w-64 h-64 mx-auto"
+          alt="Product"
+        />
+
+        <p className="flex justify-center items-center py-4 overflow-hidden font-semibold">
+          $ {product.price}
+        </p>
       </div>
-      <div className="flex justify-end gap-2">
-        <Button
-          className="bg-blue-500 hover:bg-blue-600"
-          onClick={() => {
-            console.log("cart");
-          }}
-        >
-          Agregar al carro
+
+      <div className="flex justify-center items-center">
+        <Button className="text-sm" onClick={onAddToCart}>
+          Añadir a la cesta
         </Button>
       </div>
     </Card>
