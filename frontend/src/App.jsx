@@ -14,11 +14,14 @@ import SignUp from "./components/admin/SignUp";
 import SignIn from "./components/admin/SignIn";
 import Profile from "./components/admin/Profile";
 import Products from "./components/pages/Products";
+import ProductView from "./components/ui/products/ProductView";
 import Cart from "./components/pages/Cart";
 import ProductForm from "./components/admin/ProductForm";
 import NotFound from "./components/pages/NotFound";
 
 import ProductsAdmin from "./components/admin/ProductsAdmin";
+
+import WhatsappButton from "./components/ui/WhatsappButton";
 
 function App() {
   const { isAuth, loading } = useAuth();
@@ -66,6 +69,7 @@ function App() {
             }
           >
             <Route path="/products" element={<Products />} />
+            <Route path="/product/:id" element={<ProductView />}/>
           </Route>
           <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<About />} />
@@ -73,6 +77,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
+      <WhatsappButton className="fixed bottom-4 right-4"/>
     </>
   );
 }

@@ -63,7 +63,7 @@ function Navbar() {
                       : "text-slate-950 items-center flex px-4 py-2 gap-x-2"
                   }
                 >
-                  <Link to={path}>{name}{icon}</Link>
+                  <Link to={path}>{name}<span className="text-3xl">{icon}</span></Link>
                 </li>
               ))
             )}

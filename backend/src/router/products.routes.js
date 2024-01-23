@@ -15,7 +15,7 @@ const router = Router();
 // Routes
 router.get("/products", getProducts);
 
-router.get("/products/:id", isAuth, getProductById);
+router.get("/products/:id", getProductById);
 
 router.post("/products", isAuth, validateSchema(createProductSchema), createProduct);
 

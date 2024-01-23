@@ -8,7 +8,7 @@ function Contact() {
         <div className="p-8">
           <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Contactanos</div>
           <p className="mt-2 text-gray-500">Puedes contactarte via sms, llamada o Whatsapp.</p>
-          <p className="mt-2 text-gray-500">Nuestros horarios de atencion son de 9:00 a 20:00.</p>
+          <p className="mt-2 text-gray-500">Nuestros horarios de atencion son de 9:00 a 12:00 y de 14:00 a 18:00.</p>
         </div>
       </div>
     </div>
