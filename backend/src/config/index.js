@@ -11,7 +11,11 @@ const config = {
         SECRET_ACCESS_KEY: process.env.AWS_SECRET_KEY,
         BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
         REGION: process.env.AWS_REGION
-    }
+    },
+    MP: {
+        ACCESS_TOKEN: process.env.ACCESS_TOKEN_MP
+    },
+    ORIGIN: process.env.ORIGIN
 }
 
 export default config;

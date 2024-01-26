@@ -30,6 +30,7 @@ function ProductForm() {
     if (!params.id) {
       const res = await createProduct(data);
       console.log(res);
+      navigate("/admin");
     } else {
       const product = await updateProduct(params.id, data);
       if (product) {

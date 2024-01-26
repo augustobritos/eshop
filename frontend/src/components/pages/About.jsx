@@ -10,7 +10,7 @@ function About() {
   ];
 
   return (
-    <Card>
+    <Card className="py-14">
       <h1 className="font-bold justify-center text-4xl py-4 text-center text-green-400">
         Sobre Nosotros...
       </h1>

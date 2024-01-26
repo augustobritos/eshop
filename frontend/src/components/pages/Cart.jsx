@@ -1,46 +1,162 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
+import { createPreference } from "../../api/mercadopago.api";
+import { MercadoPagoButton } from "../utils/MercadoPagoButton";
+import { Container, Card } from "../ui/Index";
+import { FaPlusCircle } from "react-icons/fa";
+import { FaMinusCircle } from "react-icons/fa";
 
-function Cart({ product }) {
-  const [cart, setCart] = useState([]);
+function Cart() {
+  const { cartItems, getCartTotal, removeFromCart, updateQuantity } = useCart();
 
-  const addToCart = () => {
-    const existingProductIndex = cart.findIndex(
-      (item) => item.id === product.id
-    );
+  const mpFlag = true;
 
-    if (existingProductIndex >= 0) {
-      cart[existingProductIndex].quantity++;
-    } else {
-      cart.push({ ...product, quantity: 1 });
+  const [preferenceId, setPreferenceId] = useState();
+
+  const navigate = useNavigate();
+
+  const onUpdateQuantity = (productId, newQuantity) => {
+    if (newQuantity > 0) {
+      updateQuantity(productId, newQuantity);
     }
-
-    console.log(`Product ${product.title} added to cart.`);
   };
+
+  const onRemoveProduct = (product) => {
+    removeFromCart(product);
+  };
+
+  const placeOrder = () => {
+    const orderMessage = cartItems
+      .map((item) => `${item.title}: x ${item.quantity} u`)
+      .join("\n");
+    const total = getCartTotal().toFixed(2);
+
+    const whatsappMessage = `¡Nuevo pedido!\n\n${orderMessage}\n\nTotal a pagar: $${total}`;
+
+    const phoneNumber = "+5493518656727";
+
+    const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+      whatsappMessage
+    )}`;
+
+    window.open(whatsappLink, "_blank");
+  };
+
+  const placeOrderWithMercadoPago = async () => {
+    const res = await createPreference(cartItems);
+
+    if (res) {
+      const id = res.data;
+
+      setPreferenceId(id);
+    }
+  };
+
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-4 text-center">Finalizar compra</h2>
+    <Container className="bg-white rounded-lg p-6 my-20">
+      <Card className="mx-2 py-20">
+        {cartItems.length > 0 && (
+          <h2 className="text-2xl font-bold mb-10 text-center">
+            ¡Confirma Tu Compra Ahora y Transforma Tu Experiencia!
+          </h2>
+        )}
 
-      {/* Display products in the cart */}
-      {cart.map((item) => (
-        <div key={item.id} className="flex items-center justify-between mb-2">
-          <p className="text-gray-600">{item.title}</p>
-          <p className="text-gray-800">${(item.price * item.quantity).toFixed(2)}</p>
+        {cartItems.length === 0 ? (
+          <div>
+            <p className="text-center text-gray-600 py-10">
+              Tu carrito está vacío.
+            </p>
+          </div>
+        ) : (
+          cartItems.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center justify-between mb-2"
+            >
+              <div className="title-column" style={{ width: "200px" }}>
+                <p className="text-gray-600 text-xl">{item.title}</p>
+              </div>
+              <div className="quantity-group" style={{ width: "100px" }}>
+                <div className="quantity-group">
+                  <button
+                    className="quantity-button p-2 text-lg text-red-500 gap-2"
+                    onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                  >
+                    <FaMinusCircle />
+                  </button>
+                  <span className="quantity text-xl">{item.quantity}</span>
+                  <button
+                    className="quantity-button p-2 text-xl text-green-500"
+                    onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                  >
+                    <FaPlusCircle />
+                  </button>
+                </div>
+              </div>
+              <img
+                className="text-gray-600"
+                src={item.image}
+                height={100}
+                width={100}
+              />
+              <p className="text-gray-800 text-xl" style={{ width: "150px" }}>
+                $ {(item.price * item.quantity).toFixed(2)}
+              </p>
+              <button
+                className="text-red-500"
+                onClick={() => onRemoveProduct(item)}
+              >
+                Quitar
+              </button>
+            </div>
+          ))
+        )}
+
+        {cartItems.length > 0 && (
+          <div className="flex items-center justify-between">
+            <p className="text-xl font-bold">Total:</p>
+            <p className="text-xl font-bold">${getCartTotal()}</p>
+          </div>
+        )}
+
+        {cartItems.length > 0 ? (
+          <div className="flex justify-center items-center gap-4">
+            <button
+              className="bg-green-500 text-white px-4 py-2 mt-6 rounded-full"
+              onClick={placeOrder}
+            >
+              Pago Efectivo
+            </button>
+            {mpFlag && (
+              <button
+                className="bg-green-500 text-white px-4 py-2 mt-6 rounded-full"
+                onClick={placeOrderWithMercadoPago}
+              >
+                Mercado Pago
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="flex justify-center items-center py-7">
+            <button
+              className="bg-green-500 text-white px-4 py-2 mt-6 rounded-full"
+              onClick={() => {
+                navigate("/products");
+              }}
+            >
+              Explorar productos
+            </button>
+          </div>
+        )}
+
+        {preferenceId && 
+        <div className="my-10">
+          <MercadoPagoButton preferenceId={preferenceId}/>
         </div>
-      ))}
-      
-      {/* Total price */}
-      <div className="flex items-center justify-between">
-        <p className="text-xl font-bold">Total:</p>
-        <p className="text-xl font-bold">${cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</p>
-      </div>
-
-      {/* Checkout button */}
-      <div className="flex justify-center items-center">
-        <button className="bg-green-500 text-white px-4 py-2 mt-6 rounded-full">
-          Comprar
-        </button>
-      </div>
-    </div>
+        }
+      </Card>
+    </Container>
   );
 }
 

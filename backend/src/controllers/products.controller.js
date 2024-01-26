@@ -1,69 +1,96 @@
-import pool from "../db.js";
+import { firestore } from "../config/firebase.js";
 
-
-const getProducts = async (req, res) => {
-  const result = await pool.query("SELECT * FROM products");
-  return res.json(result.rows);
-};
-
-const getProductById = async (req, res) => {
-  const id = req.params.id;
-  const result = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
-
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "The product does not exist.",
-    });
-  }
-  return res.json(result.rows[0]);
-};
+//const firestore = getFirestore();
 
 const createProduct = async (req, res, next) => {
   const { title, description, price, image } = req.body;
 
   try {
-    const result = await pool.query(
-      "INSERT INTO products (title, description, price, image) VALUES ($1, $2, $3, $4) RETURNING *",
-      [title, description, price, image]
-    );
-    res.json(result.rows[0]);
+    const docRef = firestore.collection("products").doc();
+
+    await docRef.set({
+      title,
+      description,
+      price,
+      image,
+    });
+
+    res.json(docRef.id);
   } catch (error) {
-    if (error.code === "23505") {
-      return res.status(409).json({
-        message: "Already exists a product with that title",
-      });
-    }
     console.error(error);
     next(error);
   }
 };
 
-const updateProduct = async (req, res, product) => {
-  const { title, description } = req.body;
-  const id = req.params.id;
-  const result = await pool.query(
-    "UPDATE products SET title = $2, description = $3 WHERE id = $1 RETURNING *",
-    [id, title, description]
-  );
-
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "The product does not exist.",
+const getProducts = async (req, res) => {
+  try {
+    const snapshot = await firestore.collection("products").get();
+    const products = snapshot.docs.map((doc) => {
+      const id = doc.id;
+      const data = doc.data();
+      return { id, ...data }; // Include document ID in each product object
     });
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error getting products:", error);
+    res.status(500).send("Error getting products");
   }
-  return res.json(result.rowCount[0]);
+};
+
+const getProductById = async (req, res) => {
+  const productId = req.params.productId;
+  try {
+    const productRef = firestore.collection("products").doc(productId);
+    const doc = await productRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    const productData = doc.data();
+    res.status(200).json({ id: doc.id, data: productData });
+  } catch (error) {
+    console.error("Error getting product:", error);
+    res.status(500).send("Error getting product");
+  }
+};
+
+const updateProduct = async (req, res, product) => {
+  try {
+    const { title, description } = req.body;
+    const id = req.params.id;
+
+    const productRef = firestore.collection("products").doc(id);
+    await productRef.update({
+      title: title,
+      description: description,
+      price: price,
+      image: image,
+    });
+
+    return res.json({ message: "Producto actualizado exitosamente." });
+  } catch (error) {
+    console.error("Error al actualizar producto:", error);
+    return res.status(500).json({ message: "Error interno del servidor." });
+  }
 };
 
 const deleteProduct = async (req, res) => {
-  const id = req.params.id;
-  const result = await pool.query("DELETE FROM products WHERE id = $1", [id]);
+  try {
+    const id = req.params.id;
 
-  if (result.rowCount === 0) {
-    return res.status(404).json({
-      message: "The product does not exist.",
-    });
+    const productRef = firestore.collection("products").doc(id);
+    const doc = await productRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: "El producto no existe." });
+    }
+
+    await productRef.delete();
+
+    return res.sendStatus(204);
+  } catch (error) {
+    console.error("Error al eliminar producto:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
   }
-  return res.sendStatus(204);
 };
 
 export {

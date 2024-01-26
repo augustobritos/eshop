@@ -5,6 +5,7 @@ import express from "express";
 import productRoutes from "./router/products.routes.js";
 import authRoutes from "./router/auth.routes.js";
 import s3Routes from "./router/s3.routes.js";
+import paymentRoutes from "./router/payment.routes.js";
 
 // Libraries
 import morgan from "morgan";
@@ -12,8 +13,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 // Config
-import { pool } from "./db.js";
-import { ORIGIN } from "./config.js";
+import config from "./config/index.js";
 
 // Create an Express application
 const app = express();
@@ -22,7 +22,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ORIGIN,
+    origin: config.ORIGIN,
     credentials: true,
   })
 );
@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to my Project!" });
 });
 
-app.get("/api/ping", async(req, res) => {
+app.get("/api/ping", async(req, res) => { //doesnt work
   try {
     const response = await pool.query("SELECT NOW()");
     res.json(response.rows);
@@ -44,10 +44,15 @@ app.get("/api/ping", async(req, res) => {
   }
 });
 
+app.get("/test", async(req, res) => { //doesnt work
+  res.json({ message: "HELLO WORLD" });
+});
+
 // Mount routes
 app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api/s3", s3Routes);
+app.use("/api", paymentRoutes);
 
 // Middleware for error for handling internal server errors
 app.use((err, req, res, next) => {
@@ -56,5 +61,11 @@ app.use((err, req, res, next) => {
     message: err.message,
   });
 });
+
+export const myShop = (req, res) => {
+  
+  app(req,res);
+};
+
 
 export default app;

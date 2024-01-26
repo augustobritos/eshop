@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import { useAuth } from "./context/AuthContext";
 import { ProductsProvider } from "./context/ProductsContext";
+import { CartProvider } from"./context/CartContext";
 
 import { Container } from "./components/ui/Container";
 import Navbar from "./components/navbar/Navbar";
@@ -17,6 +18,8 @@ import Products from "./components/pages/Products";
 import ProductView from "./components/ui/products/ProductView";
 import Cart from "./components/pages/Cart";
 import ProductForm from "./components/admin/ProductForm";
+import SuccessPayment from "./components/pages/SuccessPayment";
+import Footer from "./components/pages/Footer";
 import NotFound from "./components/pages/NotFound";
 
 import ProductsAdmin from "./components/admin/ProductsAdmin";
@@ -60,24 +63,36 @@ function App() {
               <Route path="/admin" element={<ProductsAdmin />} />
             </Route>
           </Route>
+
           <Route path="/" element={<Home />} />
           <Route
             element={
               <ProductsProvider>
+                <CartProvider>
                 <Outlet />
+                </CartProvider>
+                
               </ProductsProvider>
             }
           >
             <Route path="/products" element={<Products />} />
             <Route path="/product/:id" element={<ProductView />}/>
+            <Route path="/cart" element={<Cart />} />
           </Route>
-          <Route path="/cart" element={<Cart />} />
+ 
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
+
+          <Route
+            element={<ProtectedRoute isAllowed={true} redirectTo="/signin" />}
+          >
+            <Route path="/success" element={<SuccessPayment />} />
+          </Route>
         </Routes>
       </Container>
       <WhatsappButton className="fixed bottom-4 right-4"/>
+      <Footer />
     </>
   );
 }

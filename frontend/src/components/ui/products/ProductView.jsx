@@ -3,23 +3,26 @@ import { useParams } from "react-router-dom";
 import { useProducts } from "../../../context/ProductsContext.jsx";
 import { Card, Button } from "../Index.js";
 import { Container } from "../Container.jsx";
-import Cart from "../../pages/Cart.jsx";
+  import { useCart } from "../../../context/CartContext";
 
 function ProductView() {
+
   const { getProduct } = useProducts();
   const [product, setProduct] = useState(null);
   const params = useParams();
 
-  const onAddToCart = () => {
+  const { addItemToCart } = useCart();
 
-    <Cart product={product} />
+  const onAddToCart = async () => {
+    const res = await addItemToCart(product);
+    console.log(res);
   };
 
   useEffect(() => {
     if (params.id) {
       getProduct(params.id)
-        .then((product) => { 
-          setProduct(product);          
+        .then((product) => {
+          setProduct(product);
         })
         .catch((error) => {
           console.error(error.message);
@@ -34,13 +37,13 @@ function ProductView() {
           {product ? product.title : "Loading..."}
         </h1>
         <div className="flex justify-center items-center py-4 overflow-hidden font-semibold">
-          <img src={product ? product.image : ""} height={500} width={500}/>
+          <img src={product ? product.image : ""} height={500} width={500} />
         </div>
         <p className="flex justify-center items-center py-4 overflow-hidden font-semibold">
           $ {product ? product.price : ""}
         </p>
         <p className="flex justify-center items-center py-4 overflow-hidden font-normal">
-            Descripcion: {product ? product.description : ""}
+          Descripcion: {product ? product.description : ""}
         </p>
         <div className="flex justify-center items-center py-4">
           <Button className="text-sm" onClick={onAddToCart}>

@@ -1,6 +1,6 @@
 import app from "./app.js";
-import { PORT } from "./config.js";
+import config from "./config/index.js";
 
-app.listen(PORT);
+app.listen(config.PORT);
 
-console.log("Server on port " + PORT);
+console.log("Server on port " + config.PORT);
