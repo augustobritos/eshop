@@ -1,6 +1,10 @@
 import app from "./app.js";
-import config from "./config/index.js";
 
-app.listen(config.PORT);
+// GCF - Entry Point
+export const myShop = () => {
+  const PORT = 3000;
 
-console.log("Server on port " + config.PORT);
+  app.listen(PORT);
+
+  console.log("Server on port " + PORT);
+};

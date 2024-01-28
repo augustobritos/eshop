@@ -1,5 +1,5 @@
 import express from "express";
-import { createPresignedPost } from "./utils/s3";
+import createPresignedPost from "../utils/s3.js";
 
 const s3Router = express.Router();
 

@@ -3,8 +3,6 @@ import bcrypt from "bcrypt";
 import createAccessToken from "../libs/jwt.js";
 import md5 from "md5";
 
-//const firestore = getFirestore();
-
 const signUp = async (req, res, next) => {
   const { name, email, password } = req.body;
   try {

@@ -1,7 +1,5 @@
 import { firestore } from "../config/firebase.js";
 
-//const firestore = getFirestore();
-
 const createProduct = async (req, res, next) => {
   const { title, description, price, image } = req.body;
 

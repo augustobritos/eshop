@@ -1,13 +1,21 @@
-import { initializeApp, applicationDefault, cert } from "firebase-admin/app";
+import { initializeApp } from "firebase-admin/app";
+import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import serviceAccount from "../../database/dev-splicer-412313-b0749b215bc7.json" assert { type: "json" };
+import { getDatabaseconfig } from "../config/index.js";
 
-// Initialize Firebase Admin SDK
-const firebaseApp = initializeApp({
-  credential: cert(serviceAccount),
-});
+let firestore;
 
-// Get Firestore instance
-const firestore = getFirestore(firebaseApp);
+if (!firestore) {
+  getDatabaseconfig()
+    .then((data) => {
+      const firebaseApp = initializeApp({
+        credential: admin.credential.cert(data.DB.CREDENTIALS),
+      });
+      firestore = getFirestore(firebaseApp);
+    })
+    .catch((err) => {
+      console.error("Error initializing Firebase:", err);
+    });
+}
 
 export { firestore };

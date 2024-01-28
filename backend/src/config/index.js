@@ -1,21 +1,51 @@
-import { config as loadConfig } from "dotenv";
+import accessSecret from "../utils/secret.js";
 
-loadConfig({
-    path: ".env"
-})
+const getConfigFromSecret = async (secretName) => {
+  try {
+    const data = await accessSecret(secretName);
+    const response = JSON.parse(data);
+    return response;
+  } catch (err) {
+    console.error(`Error while retrieving ${secretName} configuration:`, err);
+    return null;
+  }
+};
 
-const config = {
-    PORT: parseInt(process.env.PORT) || 4000,
+export const getAwsConfig = async () => {
+  const response = await getConfigFromSecret("AWS");
+
+  if (!response) return null;
+
+  const AWS = response;
+
+  return {
     AWS: {
-        ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
-        SECRET_ACCESS_KEY: process.env.AWS_SECRET_KEY,
-        BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
-        REGION: process.env.AWS_REGION
+      ACCESS_KEY_ID: AWS?.ACCESS_KEY_ID || null,
+      SECRET_ACCESS_KEY: AWS?.SECRET_KEY || null,
     },
-    MP: {
-        ACCESS_TOKEN: process.env.ACCESS_TOKEN_MP
-    },
-    ORIGIN: process.env.ORIGIN
-}
+  };
+};
 
-export default config;
+export const getMercadoPagoConfig = async () => {
+  const response = await getConfigFromSecret("MERCADO_PAGO");
+
+  if (!response) return null;
+
+  return {
+    MP: {
+      ACCESS_TOKEN: response.MP?.ACCESS_TOKEN || null,
+    },
+  };
+};
+
+export const getDatabaseconfig = async () => {
+  const response = await getConfigFromSecret("DB_CONFIG");
+
+  if (!response) return null;
+
+  return {
+    DB: {
+      CREDENTIALS: response || null,
+    },
+  };
+};
