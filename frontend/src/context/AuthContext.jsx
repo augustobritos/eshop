@@ -1,6 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import cookie from "js-cookie";
 import axios from "../api/axios";
+import {
+  updateProfileRequest,
+  getEnabledPaymentsRequest,
+  updateEnabledPaymentsRequest,
+} from "../api/admin.api";
 
 const AuthContext = createContext();
 
@@ -66,6 +71,44 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const updateProfile = async (data) => {
+    console.log("updateProfile");
+    try {
+      const res = await updateProfileRequest(data);
+      return res.data;
+    } catch (error) {
+      console.error(error.message);
+      if (Array.isArray(error.response.data)) {
+        return setErrors(error.response.data);
+      }
+
+      setErrors([error.response.data.message]);
+    }
+  };
+
+  const getEnabledPayments = async () => {
+    try {
+      const res = await getEnabledPaymentsRequest();
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  const updateEnabledPayments = async (payments) => {
+    try {
+      console.log("updateEnabledPayments");
+      const res = await updateEnabledPaymentsRequest(payments);
+      console.log(res.data);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+  
+
   useEffect(() => {
     setLoading(true);
     if (cookie.get("token")) {
@@ -105,6 +148,9 @@ export function AuthProvider({ children }) {
         signUp,
         setUser,
         signIn,
+        updateProfile,
+        getEnabledPayments,
+        updateEnabledPayments,
         signOut,
         loading,
       }}

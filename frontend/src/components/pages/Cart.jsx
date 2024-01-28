@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { createPreference } from "../../api/mercadopago.api";
@@ -6,12 +6,15 @@ import { MercadoPagoButton } from "../utils/MercadoPagoButton";
 import { Container, Card } from "../ui/Index";
 import { FaPlusCircle } from "react-icons/fa";
 import { FaMinusCircle } from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
 
 function Cart() {
   const { cartItems, getCartTotal, removeFromCart, updateQuantity } = useCart();
-
-  const mpFlag = true;
-
+  
+  const { getEnabledPayments } = useAuth();
+  
+  const [payments, setPayments] = useState(null);
+  
   const [preferenceId, setPreferenceId] = useState();
 
   const navigate = useNavigate();
@@ -52,6 +55,20 @@ function Cart() {
       setPreferenceId(id);
     }
   };
+  
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const response = await getEnabledPayments();
+        console.log(response);
+        setPayments(response); 
+      } catch (error) {
+        console.error('Error fetching payments:', error);
+      }
+    };
+
+    fetchPayments();
+  }, []); 
 
   return (
     <Container className="bg-white rounded-lg p-6 my-20">
@@ -128,7 +145,7 @@ function Cart() {
             >
               Pago Efectivo
             </button>
-            {mpFlag && (
+            {(payments?.mercadopago === true) && (
               <button
                 className="bg-green-500 text-white px-4 py-2 mt-6 rounded-full"
                 onClick={placeOrderWithMercadoPago}

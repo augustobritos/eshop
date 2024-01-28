@@ -4,6 +4,7 @@ import {
   signIn,
   signOut,
   getProfile,
+  updateProfile,
 } from "../controllers/auth.controller.js";
 import isAuth from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
@@ -19,5 +20,7 @@ router.post("/signin", validateSchema(signInSchema), signIn);
 router.post("/signout", signOut);
 
 router.get("/profile", isAuth, getProfile);
+
+router.put("/updateProfile", isAuth, updateProfile);
 
 export default router;

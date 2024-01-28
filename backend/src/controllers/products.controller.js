@@ -51,7 +51,7 @@ const getProductById = async (req, res) => {
   }
 };
 
-const updateProduct = async (req, res, product) => {
+const updateProduct = async (req, res) => {
   try {
     const { title, description } = req.body;
     const id = req.params.id;

@@ -1,7 +1,7 @@
 import { firestore } from "../config/firebase.js";
 import bcrypt from "bcrypt";
 import createAccessToken from "../libs/jwt.js";
-import md5 from "md5";
+import md5 from "md5"
 
 const signUp = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -81,4 +81,54 @@ const getProfile = async (req, res) => {
   return res.json(userDoc.data());
 };
 
-export { signUp, signIn, signOut, getProfile };
+const updateProfile = async (req, res) => {
+  const user = req.body;
+  console.log(user);
+  try {
+    const userRef = firestore.collection("users").doc(req.userId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    await userRef.update(user);
+
+    return res.json({ message: "User profile updated successfully." });
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    return res.status(500).json({ message: "Failed to update user profile." });
+  }
+};
+
+const getEnabledPayments = async (req, res) => {
+  const userRef = firestore.collection("payments").doc("enabled");
+  const userDoc = await userRef.get();
+  
+  if (!userDoc.exists) {
+    return res.status(404).json({ message: "Document not found." });
+  }
+
+  return res.json(userDoc.data());
+}
+
+const updateEnabledPayments = async (req, res) => {
+  try {
+    console.log(req.body);
+    const userRef = firestore.collection("payments").doc("enabled");
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "Document not found." });
+    }
+
+    await userRef.update(req.body);
+
+    return res.json({ message: "Payments updated successfully." });
+  } catch (error) {
+    console.error("Error updating payments:", error);
+    return res.status(500).json({ message: "Failed to update payments." });
+  }
+}
+
+export { signUp, signIn, signOut, getProfile, updateProfile, getEnabledPayments, updateEnabledPayments };
