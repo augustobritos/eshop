@@ -5,7 +5,7 @@ function EmptyCart() {
   const navigate = useNavigate();
 
   return (
-    <Card>
+    <Card className="max-w-md mx-auto bg-white overflow-hidden md:max-w-3xl m-10">
       <div>
         <p className="text-center text-gray-600 py-10">
           Tu carrito está vacío.

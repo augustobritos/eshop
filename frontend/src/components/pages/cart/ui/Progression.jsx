@@ -1,8 +1,8 @@
 import { Step, Stepper, StepLabel, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 
-function Progression({ activeStep }) {
-  const steps = ["Revisa tu compra", "Completa tu informacion", "Paga"];
+function Progression({ activeStep, onBack }) {
+  const steps = ["Revisa tu compra", "Completa tu informacion", "Paga y Disfruta"];
 
   const isStepOptional = (step) => {
     // Implement your logic for optional steps
@@ -30,7 +30,9 @@ function Progression({ activeStep }) {
           }
           return (
             <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
+              <button onClick={onBack}>
+                <StepLabel {...labelProps}>{label}</StepLabel>
+              </button>
             </Step>
           );
         })}

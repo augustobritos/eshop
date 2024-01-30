@@ -8,7 +8,7 @@ import { Card, Button } from "../Index.js";
 import { Container } from "../Container.jsx";
 
 function ProductView() {
-  const { getProduct } = useProducts();
+  const { getProductById } = useProducts();
   const [product, setProduct] = useState(null);
   const dispatch = useDispatch();
   const params = useParams();
@@ -19,8 +19,11 @@ function ProductView() {
 
   useEffect(() => {
     if (params.id) {
-      getProduct(params.id)
+      getProductById(params.id)
         .then((product) => {
+
+          console.log(product);
+
           setProduct(product);
         })
         .catch((error) => {

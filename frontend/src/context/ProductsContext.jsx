@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import {
   getProductsRequest,
-  getProductRequest,
+  getProductByIdRequest,
   createProductRequest,
   updateProductRequest,
   deleteProductRequest,
@@ -36,9 +36,9 @@ export const ProductsProvider = ({ children }) => {
     }
   };
 
-  const getProduct = async (id) => {
+  const getProductById = async (id) => {
     try {
-      const res = await getProductRequest(id);
+      const res = await getProductByIdRequest(id);
       return res.data;
     } catch (error) {
       setErrors([error.response.data.message]);
@@ -104,7 +104,7 @@ export const ProductsProvider = ({ children }) => {
       value={{
         products,
         getProducts,
-        getProduct,
+        getProductById,
         createProduct,
         updateProduct,
         deleteProduct,

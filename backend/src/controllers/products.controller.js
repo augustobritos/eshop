@@ -36,18 +36,24 @@ const getProducts = async (req, res) => {
 };
 
 const getProductById = async (req, res) => {
-  const productId = req.params.productId;
   try {
-    const productRef = firestore.collection("products").doc(productId);
+    const productRef = firestore.collection("products").doc(req.params.id);
     const doc = await productRef.get();
     if (!doc.exists) {
       return res.status(404).json({ error: "Product not found" });
     }
     const productData = doc.data();
-    res.status(200).json({ id: doc.id, data: productData });
+
+    res.status(200).json({
+      id: doc.id,
+      description: productData.description,
+      image: productData.image,
+      price: productData.price,
+      title: productData.title,
+    });
   } catch (error) {
     console.error("Error getting product:", error);
-    res.status(500).send("Error getting product");
+    res.status(500).json({ error: "Something went wrong" });
   }
 };
 

@@ -21,7 +21,7 @@ function ProductsCard({ product }) {
     
       <Card
         key={product.id}
-        className="py-16 px-7 flex flex-col items-center justify-center border rounded-xl bg-white shadow-md"
+        className="py-8 flex flex-col items-center justify-center border rounded-xl bg-white shadow-md"
         style={{ transition: "box-shadow 0.5s" }}
         onMouseOver={(e) => {
           e.currentTarget.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.2)";

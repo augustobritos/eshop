@@ -16,6 +16,8 @@ import Products from "./components/pages/Products";
 import ProductView from "./components/ui/products/ProductView";
 import Cart from "./components/pages/cart/Cart";
 import Checkout from "./components/pages/cart/Checkout";
+import SuccessPayment from "./components/pages/cart/SuccessPayment";
+import ErrorPayment from "./components/pages/cart/ErrorPayment";
 import ProductForm from "./components/admin/ProductForm";
 import Footer from "./components/pages/Footer";
 import NotFound from "./components/pages/NotFound";
@@ -34,7 +36,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <Container className="py-5">
+      <Container className="py-24">
         <Routes>
           {/* Public - Protected Routes */}
           <Route
@@ -69,6 +71,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/success" element={<SuccessPayment />} />
+          <Route path="/error_payment" element={<ErrorPayment />} />
           <Route path="*" element={<NotFound />} />
           <Route
             element={

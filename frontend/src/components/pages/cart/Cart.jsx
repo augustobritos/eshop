@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateQuantity, removeFromCart } from "../../../redux/cartSlice";
 
@@ -7,7 +7,6 @@ import CartSummary from "./CartSummary";
 import Checkout from "./Checkout";
 import EmptyCart from "./EmptyCart";
 import ContinueButton from "./ContinueButton";
-import SuccessPayment from "./SuccessPayment";
 
 //ui
 import { Container } from "../../ui/Index";
@@ -18,41 +17,44 @@ function Cart() {
   const cartItems = cart.items;
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
-  const [steps, setSteps] = useState(1);
+  const [customerData, setCustomerData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
+
+  const [formDataFilled, setFormDataFilled] = useState(false);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    console.log("handleBack");
+    if (activeStep > 0) {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
   };
 
   const handleReset = () => {
     setActiveStep(0);
   };
 
-  const [paymentId, setPaymentId] = useState(null);
 
-  useEffect(() => {
-    const url = window.location.href;
-    const params = new URLSearchParams(url);
-    const paymentIdValue = params.get("payment_id");
-    setPaymentId(paymentIdValue);
-  }, []);
+  
 
   const onUpdateQuantity = (productId, newQuantity) => {
     if (newQuantity > 0) {
       dispatch(updateQuantity({ id: productId, quantity: newQuantity }));
-    } 
+    }
   };
 
   const onRemoveProduct = (product) => {
     dispatch(removeFromCart(product));
   };
 
-  const onContinue = (step) => {
-    setSteps(step);
+  const onContinue = () => {
     handleNext();
   };
 
@@ -64,17 +66,23 @@ function Cart() {
       .toFixed(2);
   };
 
+  const onFormDataChange = (data) => {
+    const filled = Object.values(data).every((value) => value.trim() !== "");
+    setFormDataFilled(filled);
+    setCustomerData(data);
+  };
+
   return (
     <Container className="bg-white rounded-lg p-18 my-24">
       {/* Summary section */}
 
-      {cartItems.length === 0 && !paymentId ? (
+      {cartItems.length === 0 ? (
         <EmptyCart />
       ) : (
-        <Progression activeStep={activeStep} />
+        <Progression activeStep={activeStep} onBack={() => handleBack()} />
       )}
 
-      {cartItems.length > 0 && steps === 1 && (
+      {cartItems.length > 0 && activeStep === 0 && (
         <>
           {cartItems.map((item) => (
             <div key={item.id}>
@@ -91,28 +99,27 @@ function Cart() {
             <p className="text-xl font-bold">Total:</p>
             <p className="text-xl font-bold mx-2">$ {getTotal()}</p>
           </div>
-          <ContinueButton onClick={onContinue} step={2} />
+          <ContinueButton onClick={onContinue} disabled={formDataFilled} />
         </>
       )}
 
       {/* Form section */}
-      {steps === 2 && (
+      {activeStep === 1 && (
         <>
-          <CustomerForm />
-          <ContinueButton onClick={onContinue} step={3} />
+          <CustomerForm onFormDataChange={onFormDataChange} />
+          <ContinueButton
+            onClick={onContinue}
+            formDataFilled={formDataFilled}
+          />
         </>
       )}
 
       {/* Checkout section */}
-      {steps === 3 && (
+      {activeStep === 2 && (
         <>
-          <Checkout items={cartItems} total={getTotal()}/>
-          
+          <Checkout items={cartItems} total={getTotal()} customerData={customerData} />
         </>
       )}
-
-      {/* Result section */}
-      {paymentId && <SuccessPayment paymentId={paymentId} />}
     </Container>
   );
 }

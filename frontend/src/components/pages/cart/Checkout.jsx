@@ -8,17 +8,28 @@ import { MercadoPagoButton } from "../../utils/MercadoPagoButton";
 import { PaypalButton } from "../../utils/PaypalButton";
 import { Container, Card } from "../../ui/Index";
 
-function Checkout({ items, total }) {
+function Checkout({ items, total, customerData }) {
   const { getEnabledPayments } = useAuth();
   const [payments, setPayments] = useState(null);
   const [preferenceId, setPreferenceId] = useState();
 
   const payWithCash = () => {
-    const orderMessage = items
-      .map((item) => `${item.title}: x ${item.quantity} u`)
-      .join("\n");
+    const { name, email, phone, address } = customerData;
 
-    const whatsappMessage = `¡Nuevo pedido!\n\n${orderMessage}\n\nTotal a pagar: $${total}`;
+    const orderMessage = items
+      .map((item) => `${item.title}: x ${item.quantity} unidades $${(item.price * item.quantity)}`)
+      .join(".\n");
+
+    const whatsappMessage = `
+    Hola ${name},
+    ¡Gracias por tu compra en nuestra tienda en línea! 
+    El total de tu compra es de: $${total} y contiene los siguientes items:\n\n${orderMessage}\n
+    Por favor indicanos si es para ser enviado a la direccion: ${address}.
+    Si tienes alguna pregunta o necesitas ayuda adicional, no dudes en contactarnos.
+    Estamos aquí para ayudarte en todo lo que necesites.
+    ¡Gracias nuevamente por elegirnos!
+    Atentamente,
+    [Nombre del Negocio]`;
 
     const phoneNumber = "+5493518656727";
 
@@ -104,8 +115,9 @@ function Checkout({ items, total }) {
           </div>
         </Card>
       )}
+
       {preferenceId && (
-        <div className="p-72">
+        <div className="p-auto">
           {/* Assuming MercadoPagoButton is a component to handle Mercado Pago payments */}
           <MercadoPagoButton preferenceId={preferenceId} />
         </div>

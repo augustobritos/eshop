@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Input, Label } from "../../ui/Index";
 
-function CustomerForm() {
+function CustomerForm({ onFormDataChange }) {
   const [customerData, setCustomerData] = useState({
     name: "",
     email: "",
@@ -12,7 +12,13 @@ function CustomerForm() {
   const onInputChange = (e) => {
     const { name, value } = e.target;
     setCustomerData({ ...customerData, [name]: value });
+    onFormDataChange({ ...customerData, [name]: value });
   };
+
+  useEffect(() => {
+    // Call the onFormDataChange function with the initial form data
+    onFormDataChange(customerData);
+  }, []); 
 
   return (
     <Card className="mb-5 border border-solid border-gray-300 rounded-2xl p-4 shadow-md">
