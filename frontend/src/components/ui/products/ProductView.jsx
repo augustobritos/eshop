@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/cartSlice";
+
 import { useProducts } from "../../../context/ProductsContext.jsx";
 import { Card, Button } from "../Index.js";
 import { Container } from "../Container.jsx";
-  import { useCart } from "../../../context/CartContext";
 
 function ProductView() {
-
   const { getProduct } = useProducts();
   const [product, setProduct] = useState(null);
+  const dispatch = useDispatch();
   const params = useParams();
 
-  const { addItemToCart } = useCart();
-
   const onAddToCart = async () => {
-    const res = await addItemToCart(product);
-    console.log(res);
+    dispatch(addToCart(product));
   };
 
   useEffect(() => {

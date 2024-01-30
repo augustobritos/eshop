@@ -1,15 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../../../context/CartContext";
 import { Card, Button } from "../Index";
 
-function ProductsCard({ product }) {
+import { useSelector, useDispatch } from 'react-redux';
+import { addToCart } from '../../../redux/cartSlice';
 
+function ProductsCard({ product }) {
+  
+  const { id, title, image, price } = product;
+
+  const cart = useSelector(state => state.cart);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { addItemToCart } = useCart();
-
   const onAddToCart = async () => {
-    const res = await addItemToCart(product);
+    dispatch(addToCart(product));
   };
 
   return (
@@ -26,21 +31,21 @@ function ProductsCard({ product }) {
         }}
       >
         <button onClick={() => {
-            navigate("/product/" + product.id);
+            navigate("/product/" + id);
           }}>
         <div className="mx-auto">
           <h1 className="flex justify-center items-center text-2xl font-semibold">
-            {product.title}
+            {title}
           </h1>
 
           <img
-            src={product.image}
+            src={image}
             className="object-contain w-64 h-64 mx-auto"
             alt="Product"
           />
 
           <p className="flex justify-center items-center py-4 overflow-hidden font-semibold">
-            $ {product.price}
+            $ {price}
           </p>
         </div>
         </button>

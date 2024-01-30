@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateQuantity, removeFromCart } from "../../../redux/cartSlice";
 
-import { useCart } from "../../../context/CartContext";
 import CustomerForm from "./CustomerForm";
 import CartSummary from "./CartSummary";
 import Checkout from "./Checkout";
@@ -13,21 +14,19 @@ import { Container } from "../../ui/Index";
 import Progression from "./ui/Progression";
 
 function Cart() {
-  const { cartItems, getCartTotal, removeFromCart, updateQuantity } = useCart();
+  const cart = useSelector((state) => state.cart);
+  const cartItems = cart.items;
+  const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
-
   const [steps, setSteps] = useState(1);
 
   const handleNext = () => {
-
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
 
   const handleReset = () => {
     setActiveStep(0);
@@ -36,36 +35,33 @@ function Cart() {
   const [paymentId, setPaymentId] = useState(null);
 
   useEffect(() => {
-    // Get the URL string from window.location
     const url = window.location.href;
-
-    // Use URLSearchParams to parse the URL
     const params = new URLSearchParams(url);
-
-    // Get the value of the payment_id parameter
     const paymentIdValue = params.get("payment_id");
-
-    console.log(paymentIdValue);
-
-    // Update the state with the payment ID value
     setPaymentId(paymentIdValue);
   }, []);
 
   const onUpdateQuantity = (productId, newQuantity) => {
     if (newQuantity > 0) {
-      updateQuantity(productId, newQuantity);
-    }
+      dispatch(updateQuantity({ id: productId, quantity: newQuantity }));
+    } 
   };
 
   const onRemoveProduct = (product) => {
-    removeFromCart(product);
+    dispatch(removeFromCart(product));
   };
 
   const onContinue = (step) => {
-    // handle logic for continue button
-    console.log("continue");
     setSteps(step);
     handleNext();
+  };
+
+  const getTotal = () => {
+    return cartItems
+      .reduce((total, item) => {
+        return total + Number(item.price) * Number(item.quantity);
+      }, 0)
+      .toFixed(2);
   };
 
   return (
@@ -75,7 +71,7 @@ function Cart() {
       {cartItems.length === 0 && !paymentId ? (
         <EmptyCart />
       ) : (
-        <Progression activeStep={activeStep}/>
+        <Progression activeStep={activeStep} />
       )}
 
       {cartItems.length > 0 && steps === 1 && (
@@ -93,7 +89,7 @@ function Cart() {
           ))}
           <div className="flex items-center justify-center p-7 mb-2">
             <p className="text-xl font-bold">Total:</p>
-            <p className="text-xl font-bold mx-2">$ {getCartTotal()}</p>
+            <p className="text-xl font-bold mx-2">$ {getTotal()}</p>
           </div>
           <ContinueButton onClick={onContinue} step={2} />
         </>
@@ -110,8 +106,8 @@ function Cart() {
       {/* Checkout section */}
       {steps === 3 && (
         <>
-          <Checkout />
-          <ContinueButton onClick={onContinue} step={4} />
+          <Checkout items={cartItems} total={getTotal()}/>
+          
         </>
       )}
 
