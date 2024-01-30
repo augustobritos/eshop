@@ -11,7 +11,7 @@ function Navbar() {
   return (
     <>
       <nav className="bg-green-100">
-        <Container className="flex justify-between items-center py-3">
+        <Container className="flex flex-col md:flex-row justify-between items-center py-5">
           <Link to="/">
             <h1 className="text-2xl font-bold text-slate-950">Tienda</h1>
           </Link>

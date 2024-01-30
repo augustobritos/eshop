@@ -9,7 +9,7 @@ function WhatsappButton() {
   };
 
   return (
-    <button className="text-green-500 text-5xl font-bold py-2 px-4 rounded fixed bottom-32 right-36" onClick={openWhatsApp}>
+    <button className="text-green-500 text-5xl font-bold py-2 px-4 rounded fixed bottom-14 right-8" onClick={openWhatsApp}>
       <FaWhatsapp />
     </button>
   );

@@ -10,7 +10,6 @@ function ProductsCard({ product }) {
 
   const onAddToCart = async () => {
     const res = await addItemToCart(product);
-    console.log(res);
   };
 
   return (
