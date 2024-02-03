@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { updateQuantity, removeFromCart } from "../../../redux/cartSlice";
+import { useState, } from "react";
+import { useSelector } from "react-redux";
 
 import CustomerForm from "./CustomerForm";
 import CartSummary from "./CartSummary";
@@ -8,14 +7,11 @@ import Checkout from "./Checkout";
 import EmptyCart from "./EmptyCart";
 import ContinueButton from "./ContinueButton";
 
-//ui
-import { Container } from "../../ui/Index";
+import { Container, Typography, Grid } from "@material-ui/core";
 import Progression from "./ui/Progression";
 
-function Cart() {
-  const cart = useSelector((state) => state.cart);
-  const cartItems = cart.items;
-  const dispatch = useDispatch();
+function Cart({ theme }) {
+  const cartItems = useSelector((state) => state.cart.items);
   const [activeStep, setActiveStep] = useState(0);
   const [customerData, setCustomerData] = useState({
     name: "",
@@ -26,12 +22,11 @@ function Cart() {
 
   const [formDataFilled, setFormDataFilled] = useState(false);
 
-  const handleNext = () => {
+  const handleContinue = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    console.log("handleBack");
     if (activeStep > 0) {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
     }
@@ -39,23 +34,6 @@ function Cart() {
 
   const handleReset = () => {
     setActiveStep(0);
-  };
-
-
-  
-
-  const onUpdateQuantity = (productId, newQuantity) => {
-    if (newQuantity > 0) {
-      dispatch(updateQuantity({ id: productId, quantity: newQuantity }));
-    }
-  };
-
-  const onRemoveProduct = (product) => {
-    dispatch(removeFromCart(product));
-  };
-
-  const onContinue = () => {
-    handleNext();
   };
 
   const getTotal = () => {
@@ -66,59 +44,55 @@ function Cart() {
       .toFixed(2);
   };
 
-  const onFormDataChange = (data) => {
+  const handleFormDataChange = (data) => {
     const filled = Object.values(data).every((value) => value.trim() !== "");
     setFormDataFilled(filled);
     setCustomerData(data);
   };
 
   return (
-    <Container className="bg-white rounded-lg p-18 my-24">
-      {/* Summary section */}
-
-      {cartItems.length === 0 ? (
-        <EmptyCart />
-      ) : (
-        <Progression activeStep={activeStep} onBack={() => handleBack()} />
-      )}
-
-      {cartItems.length > 0 && activeStep === 0 && (
+    <Container>
+      {cartItems.length === 0 && <EmptyCart />}
+      {cartItems.length > 0 && (
         <>
-          {cartItems.map((item) => (
-            <div key={item.id}>
-              {
+          <Progression activeStep={activeStep} onBack={handleBack} />
+          {/* Summary Section */}
+          {activeStep === 0 && (
+            <>
+              {cartItems.map((item) => (
                 <CartSummary
+                  key={item.id}
                   item={item}
-                  onUpdateQuantity={onUpdateQuantity}
-                  onRemoveProduct={onRemoveProduct}
                 />
-              }
-            </div>
-          ))}
-          <div className="flex items-center justify-center p-7 mb-2">
-            <p className="text-xl font-bold">Total:</p>
-            <p className="text-xl font-bold mx-2">$ {getTotal()}</p>
-          </div>
-          <ContinueButton onClick={onContinue} disabled={formDataFilled} />
+              ))}
+              <Grid container justifyContent="center" alignItems="center" spacing={2}>
+                <Grid item>
+                  <Typography variant="h6">Total:</Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="h6" >$ {getTotal()}</Typography>
+                </Grid>
+              </Grid>
+              <ContinueButton onClick={handleContinue} disabled={false}/>
+            </>
+          )}
         </>
       )}
-
       {/* Form section */}
       {activeStep === 1 && (
         <>
-          <CustomerForm onFormDataChange={onFormDataChange} />
-          <ContinueButton
-            onClick={onContinue}
-            formDataFilled={formDataFilled}
-          />
+          <CustomerForm handleFormDataChange={handleFormDataChange} theme={theme}/>
+          <ContinueButton onClick={handleContinue} disabled={!formDataFilled} />
         </>
       )}
-
       {/* Checkout section */}
-      {activeStep === 2 && (
-        <>
-          <Checkout items={cartItems} total={getTotal()} customerData={customerData} />
-        </>
+      {(activeStep === 2 || activeStep === 3 ) && (
+        <Checkout
+          items={cartItems}
+          total={getTotal()}
+          customerData={customerData}
+          onClick={handleContinue}
+        />
       )}
     </Container>
   );

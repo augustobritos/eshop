@@ -1,65 +1,46 @@
-import React from "react";
+import { makeStyles } from '@material-ui/core/styles';
+import { AppBar, Toolbar, Typography, Link, Hidden } from '@material-ui/core';
 
-const Footer = () => {
+const useStyles = makeStyles((theme) => ({
+  footer: {
+    marginTop: 'auto',
+    padding: theme.spacing(2),
+    textAlign: 'center',
+ },
+  link: {
+    margin: theme.spacing(0, 1),
+    color: theme.palette.common.white,
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
+}));
+
+function Footer() {
+  const classes = useStyles();
+
   return (
-    <footer className="bg-gray-100 p-12 border-t border-transparent mt-32">
-      <div className="container mx-auto flex flex-wrap items-center justify-center">
-        <div className="w-full md:w-1/2 lg:w-1/4">
-          <h2 className="font-bold text-xl mb-4">About Us</h2>
-          <p className="text-gray-700">
-            We offer the finest selection of luxury homes in the city.
-            Experience the ultimate in luxury living with our stunning
-            interiors, cutting-edge technology, and unmatched comfort.
-          </p>
-        </div>
-        <div className="w-full md:w-1/2 lg:w-1/4 mt-6 md:mt-0 md:ml-6">
-          <h2 className="font-bold text-xl mb-4">Quick Links</h2>
-          <ul className="list-none text-gray-700">
-            <li>
-              <a href="#" className="hover:underline">
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Properties
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                About Us
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Contact Us
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div className="w-full md:w-1/2 lg:w-1/4 mt-6 md:mt-0 md:ml-6">
-          <h2 className="font-bold text-xl mb-4">Connect With Us</h2>
-          <ul className="list-none text-gray-700">
-            <li>
-              <a href="#" className="hover:underline">
-                Facebook
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Twitter
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:underline">
-                Instagram
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </footer>
+    <AppBar position="static" color='secondary' className={classes.footer}>
+      <Toolbar>
+        <Typography variant="body1" color="inherit">
+          © {new Date().getFullYear()} MyStore.com | All Rights Reserved
+        </Typography>
+        <div style={{ flexGrow: 1 }} />
+        <Hidden smDown>
+          <Link href="#" className={classes.link}>
+            Terms of Service
+          </Link>
+          <Link href="#" className={classes.link}>
+            Privacy Policy
+          </Link>
+          <Link href="#" className={classes.link}>
+            Contact Us
+          </Link>
+        </Hidden>
+      </Toolbar>
+    </AppBar>
   );
-};
+}
 
 export default Footer;

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Card, Input, Button, Label, Container } from "../ui/Index";
+import { Card, TextField, Button, Container, Typography, Box } from "@mui/material";
 
 function SignUp() {
   const {
@@ -11,7 +11,6 @@ function SignUp() {
   } = useForm();
 
   const { signUp, errors: signUpErrors } = useAuth();
-
   const navigate = useNavigate();
 
   const onSubmit = handleSubmit(async (data) => {
@@ -20,58 +19,66 @@ function SignUp() {
   });
 
   return (
-    <Container className="h-[calc(100vh-10rem)] flex items-center justify-center">
-      <Card>
+    <Container sx={{ height: "calc(100vh - 10rem)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Card sx={{ p: 4, maxWidth: 400 }}>
         {signUpErrors &&
           signUpErrors.map((error, i) => (
-            <p key={i} className="bg-red-500 text-center p-2">
+            <Box key={i} sx={{ bgcolor: "error.main", color: "error.contrastText", p: 2, mb: 2, borderRadius: 1 }}>
               {error}
-            </p>
+            </Box>
           ))}
-        <h3 className="text-4xl font-bold text-green-600 my-2">Sign Up</h3>
+        <Typography variant="h4" align="center" sx={{ mb: 2, color: "success.main" }}>
+          Sign Up
+        </Typography>
         <form onSubmit={onSubmit}>
-          <Label htmlFor="name">Name</Label>
-          <Input
-            type="text"
-            placeholder="Your name"
-            autoComplete="name"
-            {...register("name", { required: true })}
-          />
+          <Box sx={{ mb: 2 }}>
+            <label htmlFor="name">Name</label>
+            <TextField
+              id="name"
+              type="text"
+              placeholder="Your name"
+              autoComplete="name"
+              {...register("name", { required: true })}
+              fullWidth
+            />
+            {errors.name && <p className="text-red-500">This field is required</p>}
+          </Box>
 
-          {errors.name && (
-            <p className="text-red-500">This field is required</p>
-          )}
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            placeholder="Your email"
-            autoComplete="email"
-            {...register("email", { required: true })}
-          />
+          <Box sx={{ mb: 2 }}>
+            <label htmlFor="email">Email</label>
+            <TextField
+              id="email"
+              type="email"
+              placeholder="Your email"
+              autoComplete="email"
+              {...register("email", { required: true })}
+              fullWidth
+            />
+            {errors.email && <p className="text-red-500">This field is required</p>}
+          </Box>
 
-          {errors.email && (
-            <p className="text-red-500">This field is required</p>
-          )}
+          <Box sx={{ mb: 2 }}>
+            <label htmlFor="password">Password</label>
+            <TextField
+              id="password"
+              type="password"
+              placeholder="Your password"
+              autoComplete="current-password"
+              {...register("password", { required: true })}
+              fullWidth
+            />
+            {errors.password && <p className="text-red-500">This field is required</p>}
+          </Box>
 
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            placeholder="Your password"
-            autoComplete="current-password"
-            {...register("password", { required: true })}
-          />
-
-          {errors.password && (
-            <p className="text-red-500">This field is required</p>
-          )}
-
-          <Button type="submit">Sign Up</Button>
+          <Button type="submit" variant="contained" color="secondary" fullWidth>
+            Sign Up
+          </Button>
         </form>
 
-        <div className="flex justify-between my-4">
-          <p>Already have an account ?</p>
-          <Link to="/signin">Sign In</Link>
-        </div>
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          <Typography>Ya tienes cuenta ?</Typography>
+          <Link to="/signin">Inicia Sesion</Link>
+        </Box>
       </Card>
     </Container>
   );

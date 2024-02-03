@@ -1,50 +1,58 @@
-import { Card, Button } from "../../ui/Index";
-import { useNavigate } from "react-router-dom";
-import { useProducts } from "../../../context/ProductsContext";
-import { PiTrashBold } from "react-icons/pi";
-import { FaEdit } from "react-icons/fa";
+import { Card, Button, Typography, IconButton } from '@material-ui/core';
+import { useNavigate } from 'react-router-dom';
+import { useProducts } from '../../../context/ProductsContext';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
 function ProductsAdminCard({ product }) {
   const { deleteProduct } = useProducts();
   const navigate = useNavigate();
+
+  const { id, title, image, price, quantity, description } = product;
+
   return (
-    <Card key={product.id} className="py-4 px-7 justify-center flex flex-col">
+    <Card key={id} className="py-4 px-7 justify-center flex flex-col">
       <div className="mx-auto">
-        <h1 className="flex justify-center items-center text-2xl font-bold">
-          {product.title}
-        </h1>
+        <Typography variant="h5" component="h2" className="flex justify-center items-center text-2xl font-bold">
+          {title}
+        </Typography>
 
         <img
-          src={product.image}
+          src={image}
           className="object-contain w-64 h-64 mx-auto"
           alt="Product"
         />
 
-        <p className="flex justify-center items-center py-4 overflow-hidden">
-          $ {product.price}
-        </p>
+        <Typography variant="body1" className="flex justify-center items-center py-4 overflow-hidden">
+          $ {price}
+        </Typography>
+
+        <Typography variant="body1" className="flex justify-center items-center py-4 overflow-hidden"> Unidades: {quantity ? quantity : 0} 
+          
+        </Typography>
       </div>
       <div className="flex justify-center items-center gap-2">
         <Button
-          className="bg-blue-500 hover:bg-blue-600"
+          variant="contained"
+          color="primary"
           onClick={() => {
-            navigate("/products/edit/" + product.id);
+            navigate("/products/edit/" + id);
           }}
+          startIcon={<EditIcon />}
         >
-          <FaEdit /> Edit
+          Editar
         </Button>
         
         <Button
-          className="bg-red-500 hover:bg-red-600"
+          variant="contained"
+          color="secondary"
           onClick={async () => {
-            if (
-              window.confirm("Estas seguro que deseas eliminar el producto?")
-            ) {
-              await deleteProduct(product.id);
+            if (window.confirm("Are you sure you want to delete the product?")) {
+              await deleteProduct(id);
             }
           }}
+          startIcon={<DeleteIcon />}
         >
-          <PiTrashBold /> Delete
+          Eliminar
         </Button>
       </div>
     </Card>

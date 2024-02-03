@@ -12,40 +12,59 @@ const getConfigFromSecret = async (secretName) => {
 };
 
 export const getAwsConfig = async () => {
-  const response = await getConfigFromSecret("AWS");
+  try {
+    const response = await getConfigFromSecret("AWS");
+    console.log(response.AWS); // logs credentials OK
 
-  if (!response) return null;
+    if (!response || !response.AWS.ACCESS_KEY_ID || !response.AWS.SECRET_KEY) {
+      throw new Error("Invalid AWS configuration");
+    }
 
-  const AWS = response;
-
-  return {
-    AWS: {
-      ACCESS_KEY_ID: AWS?.ACCESS_KEY_ID || null,
-      SECRET_ACCESS_KEY: AWS?.SECRET_KEY || null,
-    },
-  };
+    return {
+      AWS: {
+        ACCESS_KEY_ID: response.AWS.ACCESS_KEY_ID,
+        SECRET_ACCESS_KEY: response.AWS.SECRET_KEY,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching AWS configuration:", error);
+    return null;
+  }
 };
 
 export const getMercadoPagoConfig = async () => {
-  const response = await getConfigFromSecret("MERCADO_PAGO");
+  try {
+    const response = await getConfigFromSecret("MERCADO_PAGO");
+    
+    if (!response) return null;
 
-  if (!response) return null;
-
-  return {
-    MP: {
-      ACCESS_TOKEN: response.MP?.ACCESS_TOKEN || null,
-    },
-  };
+    return {
+      MP: {
+        ACCESS_TOKEN: response.MP?.ACCESS_TOKEN || null,
+        PUBLIC_KEY: response.MP?.PUBLIC_KEY || null,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching configuration from secret:", error);
+    return null;
+  }
 };
 
 export const getDatabaseconfig = async () => {
-  const response = await getConfigFromSecret("DB_CONFIG");
+  try {
+    const response = await getConfigFromSecret("DB_CONFIG");
 
-  if (!response) return null;
+    if (!response) {
+      return null;
+    }
 
-  return {
-    DB: {
-      CREDENTIALS: response || null,
-    },
-  };
+    return {
+      DB: {
+        CREDENTIALS: response || null,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching configuration from secret:", error);
+    return null;
+  }
 };

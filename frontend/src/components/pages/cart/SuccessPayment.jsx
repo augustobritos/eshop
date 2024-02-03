@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
+import { Card, Box, Typography } from "@mui/material";
 
 const SuccessPayment = () => {
-
   const [paymentId, setPaymentId] = useState(null);
 
   const date = new Date();
@@ -20,25 +20,52 @@ const SuccessPayment = () => {
   }, []);
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-3xl shadow-md overflow-hidden md:max-w-2xl py-10">
-      <div className="md:flex my-10">
-        <div className="md:flex-shrink-0">
+    <Card
+      sx={{
+        maxWidth: "md",
+        mx: "auto",
+        boxShadow: "md",
+        overflow: "hidden",
+        my: 10,
+      }}
+    >
+      <Box display="flex" m={1} p={1}>
+        <Box flex="none">
           <img
-            className="h-48 w-full object-cover md:w-48 p-5"
+            height="80px"
+            width="100%"
+            style={{ objectFit: "cover", padding: "5px" }}
             src="success.jpg"
             alt="Transaction"
           />
-        </div>
-        <div className="p-8">
-          <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold my-5">
+        </Box>
+        <Box p={1} mt={1}>
+          <Typography
+            variant="subtitle1"
+            color="primary"
+            sx={{
+              textTransform: "uppercase",
+              fontSize: "0.875rem",
+              color: "#34D399",
+              fontWeight: "600",
+              mb: 1,
+            }}
+            gutterBottom
+          >
             Muchas Gracias por tu Compra!
-          </div>
-          <p className="mt-2 text-gray-500">Transaction ID: {paymentId}</p>
-          <p className="mt-2 text-gray-500">Amount: ${paymentId}</p>
-          <p className="mt-2 text-gray-500">{currentDate}</p>
-        </div>
-      </div>
-    </div>
+          </Typography>
+          <Typography variant="body1" color="text.secondary" gutterBottom>
+            Transaction ID: {paymentId}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" gutterBottom>
+            Amount: ${paymentId}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" gutterBottom>
+            {currentDate}
+          </Typography>
+        </Box>
+      </Box>
+    </Card>
   );
 };
 

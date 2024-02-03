@@ -1,7 +1,7 @@
 import { firestore } from "../config/firebase.js";
 
 const createProduct = async (req, res, next) => {
-  const { title, description, price, image } = req.body;
+  const { title, description, price, quantity, image } = req.body;
 
   try {
     const docRef = firestore.collection("products").doc();
@@ -10,6 +10,7 @@ const createProduct = async (req, res, next) => {
       title,
       description,
       price,
+      quantity,
       image,
     });
 
@@ -49,6 +50,7 @@ const getProductById = async (req, res) => {
       description: productData.description,
       image: productData.image,
       price: productData.price,
+      quantity: productData.quantity,
       title: productData.title,
     });
   } catch (error) {

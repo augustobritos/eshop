@@ -1,28 +1,56 @@
 import { useEffect } from "react";
-import { useProducts } from "../../context/ProductsContext";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchStock } from "../../redux/middlewares/stockThunk";
+
 import ProductsCard from "../ui/products/ProductsCard";
-import { Container } from "../ui/Container";
+import { Container, Typography, Grid } from "@material-ui/core";
+import {
+  CircularProgress,
+  Box,
+} from "@mui/material";
+
+import Error from "../ui/Error";
 
 function Products() {
-  const { products, getProducts } = useProducts();
-  
-  useEffect(() => {
-    getProducts();
-  }, []);
+  const { stock, loading, error } = useSelector((state) => state.stock);
 
-  if(products.length === 0) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchStock());
+  }, [dispatch]);
+
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-[calc(100vh-10rem)]">
-        <p className="text-2xl font-bold text-slate-300">
+      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return <Error errorMessage={error} />
+  }
+
+  if(stock.length === 0) {
+    return (
+      <Container style={{ marginTop: "2rem" }}>
+        <Typography variant="h4" color="textSecondary" align="center">
           No hay productos cargados aun!
-        </p>
-      </div>
+        </Typography>
+      </Container>
     );
   }
 
   return (
-    <Container className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {products && products.map((product) => <ProductsCard product={product} key={product.id} />)}
+    <Container style={{ marginTop: "2rem", marginBottom: "2rem" }}>
+      <Grid container spacing={4}>
+        {stock && stock.map((product) => (
+          <Grid item xs={12} sm={6} md={4} key={product.id}>
+            <ProductsCard product={product} stock={stock}/>
+          </Grid>
+        ))}
+      </Grid>
     </Container>
   );
 }

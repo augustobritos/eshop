@@ -1,4 +1,6 @@
-import { FaTasks, FaPlusCircle, FaShoppingBasket } from "react-icons/fa";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AddIcon from '@mui/icons-material/Add';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 export const publicRoutes = [
   {
@@ -16,7 +18,7 @@ export const publicRoutes = [
   {
     name: "",
     path: "/cart",
-    icon: <FaShoppingBasket />,
+    icon: <ShoppingCartIcon/>,
   },
 ];
 
@@ -24,11 +26,11 @@ export const privateRoutes = [
   {
     name: "Productos",
     path: "/admin",
-    icon: <FaTasks />,
+    icon: <InventoryIcon />,
   },
   {
     name: "Nuevo",
     path: "/products/create",
-    icon: <FaPlusCircle />,
+    icon: <AddIcon />,
   },
 ];

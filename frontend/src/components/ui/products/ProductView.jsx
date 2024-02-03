@@ -2,56 +2,105 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../../redux/cartSlice";
-
-import { useProducts } from "../../../context/ProductsContext.jsx";
-import { Card, Button } from "../Index.js";
-import { Container } from "../Container.jsx";
+import {
+  Container,
+  Box,
+  Card,
+  Button,
+  Typography,
+  CircularProgress
+} from "@mui/material";
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { fetchProduct } from "../../../redux/middlewares/stockThunk.js";
 
 function ProductView() {
-  const { getProductById } = useProducts();
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const params = useParams();
 
-  const onAddToCart = async () => {
+  const handleAddToCart = async () => {
     dispatch(addToCart(product));
   };
 
   useEffect(() => {
-    if (params.id) {
-      getProductById(params.id)
-        .then((product) => {
-
-          console.log(product);
-
+    const fetch = async () => {
+      setLoading(true);
+      try {
+        if (params.id) {
+          const product = await fetchProduct(params.id);
           setProduct(product);
-        })
-        .catch((error) => {
-          console.error(error.message);
-        });
-    }
-  }, []);
-
+        }
+      } catch (error) {
+        console.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetch(); 
+  }, [params.id]);
+  
   return (
-    <Container>
-      <Card className="mx-auto my-4 py-4 shadow-md">
-        <h1 className="flex justify-center items-center text-2xl font-semibold">
-          {product ? product.title : "Loading..."}
-        </h1>
-        <div className="flex justify-center items-center py-4 overflow-hidden font-semibold">
-          <img src={product ? product.image : ""} height={500} width={500} />
-        </div>
-        <p className="flex justify-center items-center py-4 overflow-hidden font-semibold">
-          $ {product ? product.price : ""}
-        </p>
-        <p className="flex justify-center items-center py-4 overflow-hidden font-normal">
-          Descripcion: {product ? product.description : ""}
-        </p>
-        <div className="flex justify-center items-center py-4">
-          <Button className="text-sm" onClick={onAddToCart}>
-            Añadir a la cesta
-          </Button>
-        </div>
+    <Container maxWidth="md">
+      <Card sx={{ mx: "auto", my: 4, py: 4, boxShadow: 8 }}>
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              py: 4,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Typography variant="h4" align="center" gutterBottom>
+              {product.title}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                py: 4,
+                overflow: "hidden",
+                fontWeight: "bold",
+              }}
+            >
+              <img
+                src={product ? product.image : ""}
+                height={500}
+                width={500}
+                alt={product ? product.title : ""}
+              />
+            </Box>
+            <Typography variant="h6" align="center" gutterBottom>
+              $ {product.price}
+            </Typography>
+            <Typography variant="body1" align="center" gutterBottom sx={{ padding:2 }}>
+              {product.description}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                py: 4,
+              }}
+            >
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleAddToCart}
+              >
+                <AddShoppingCartIcon /> Añadir a la cesta
+              </Button>
+            </Box>
+          </>
+        )}
       </Card>
     </Container>
   );

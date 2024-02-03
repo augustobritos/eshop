@@ -1,61 +1,94 @@
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Card, Button } from "../Index";
 
-import { useSelector, useDispatch } from 'react-redux';
-import { addToCart } from '../../../redux/cartSlice';
+import { addToCart } from "../../../redux/cartSlice";
+
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Button,
+  Typography,
+} from "@mui/material";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
 function ProductsCard({ product }) {
-  
   const { id, title, image, price } = product;
-
-  const cart = useSelector(state => state.cart);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onAddToCart = async () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     dispatch(addToCart(product));
   };
 
+  const handleMouseOver = (e) => {
+    e.currentTarget.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.2)";
+  };
+
+  const handleMouseOut = (e) => {
+    e.currentTarget.style.boxShadow = "0 5px 10px rgba(0, 0, 0, 0.1)";
+  };
+
+  const handleClick = () => {
+    navigate("/product/" + id);
+  };
+
   return (
-    
-      <Card
-        key={product.id}
-        className="py-8 flex flex-col items-center justify-center border rounded-xl bg-white shadow-md"
-        style={{ transition: "box-shadow 0.5s" }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.boxShadow = "0 10px 20px rgba(0, 0, 0, 0.2)";
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.boxShadow = "0 5px 10px rgba(0, 0, 0, 0.1)";
-        }}
-      >
-        <button onClick={() => {
-            navigate("/product/" + id);
-          }}>
-        <div className="mx-auto">
-          <h1 className="flex justify-center items-center text-2xl font-semibold">
-            {title}
-          </h1>
+    <Card
+  onMouseOver={handleMouseOver}
+  onMouseOut={handleMouseOut}
+  onClick={handleClick}
+  sx={{ maxWidth: 400, width: '100%', minHeight: 400 }} 
+>
+  <CardMedia
+    component="img"
+    alt="Product"
+    image={image}
+    title={title}
+    sx={{ maxHeight: 200, objectFit: 'cover', minHeight: 300 }}
+  />
 
-          <img
-            src={image}
-            className="object-contain w-64 h-64 mx-auto"
-            alt="Product"
-          />
+  <CardContent>
+    <Typography
+      variant="h5"
+      component="h2"
+      sx={{
+        fontSize: { xs: '1.5rem', md: '2rem' }, 
+        fontWeight: "semibold",
+        textAlign: "center",
+      }}
+    >
+      {title}
+    </Typography>
+    <Typography
+      sx={{
+        py: 2,
+        fontWeight: "semibold",
+        textAlign: "center",
+      }}
+    >
+      $ {price}
+    </Typography>
+  </CardContent>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <Button
+      sx={{ fontSize: '1rem', marginBottom: 2 }} 
+      onClick={handleAddToCart}
+      color="secondary"
+    >
+      Añadir a la cesta
+      <AddShoppingCartIcon />
+    </Button>
+  </div>
+</Card>
 
-          <p className="flex justify-center items-center py-4 overflow-hidden font-semibold">
-            $ {price}
-          </p>
-        </div>
-        </button>
-
-        <div className="flex justify-center items-center">
-          <Button className="text-sm" onClick={onAddToCart}>
-            Añadir a la cesta
-          </Button>
-        </div>
-      </Card>
   );
 }
 

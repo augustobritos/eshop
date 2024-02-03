@@ -43,15 +43,11 @@ const createPreference = async (req, res, next) => {
         const { id } = data;
 
         if (id) {
-          return res
-            .send({
-              id,
-            })
-            .status(204);
+          return res.send(id).status(204);
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   } catch (error) {
     if (error) {
@@ -64,4 +60,16 @@ const createPreference = async (req, res, next) => {
   }
 };
 
-export { createPreference };
+const getMercadoPagoKey = async (req, res, next) => {
+  try {
+    const config = await getMercadoPagoConfig();
+    if(config) {
+      res.send(config.MP.PUBLIC_KEY);
+    }
+  } catch (error) {
+    console.error(error);
+    next();
+  }
+}
+
+export { createPreference, getMercadoPagoKey };

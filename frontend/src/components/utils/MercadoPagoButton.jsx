@@ -1,14 +1,48 @@
+import { useEffect, useState } from "react";
+import { CircularProgress, Typography, Box } from "@mui/material";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 
-initMercadoPago("TEST-ea76c462-7363-4745-b32c-555a9663d47a");
+function MercadoPagoButton({ preferenceId, publicKey }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-function MercadoPagoButton(data) {
-  const { id } = data.preferenceId;
-  
+  useEffect(() => {
+    if(!preferenceId || !publicKey) {
+      setLoading(false);
+      setError("Este metodo de pago no se encuentra disponible, por favor intenta luego.");
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (publicKey) {
+      initMercadoPago(publicKey);
+    }
+  }, [publicKey]);
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <div id="wallet_container">
       <Wallet
-        initialization={{ preferenceId: id }}
+        initialization={{ preferenceId }}
         customization={{
           texts: { valueProp: "smart_option" },
           visual: {

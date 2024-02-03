@@ -30,9 +30,10 @@ function Progression({ activeStep, onBack }) {
           }
           return (
             <Step key={label} {...stepProps}>
-              <button onClick={onBack}>
-                <StepLabel {...labelProps}>{label}</StepLabel>
-              </button>
+              {/* Utilize onClick event directly on StepLabel */}
+              <StepLabel onClick={() => onBack(index)}>
+                {label}
+              </StepLabel>
             </Step>
           );
         })}

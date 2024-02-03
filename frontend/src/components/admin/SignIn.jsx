@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Card, Button, Input, Label, Container } from "../ui/Index";
+import { Card, Button, TextField, Container, Typography, Box } from "@mui/material";
 
 function SignIn() {
   const {
@@ -21,51 +21,56 @@ function SignIn() {
   });
 
   return (
-    <Container className="h-[calc(100vh-10rem)] flex items-center justify-center">
-      <Card>
+    <Container sx={{ height: "calc(100vh - 10rem)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Card sx={{ p: 4, maxWidth: 400 }}>
         {signInErrors &&
-          signInErrors.map((error) => (
-            <p key={error} className="bg-red-500 text-center p-2">
+          signInErrors.map((error, index) => (
+            <Box key={index} sx={{ bgcolor: "error.main", color: "error.contrastText", p: 2, mb: 2, borderRadius: 1 }}>
               {error}
-            </p>
+            </Box>
           ))}
-        <h1 className=" text-4xl font-bold my-2 text-center">Iniciar Sesion</h1>
+        <Typography variant="h4" align="center" sx={{ mb: 2, fontWeight: "bold" }}>
+          Iniciar Sesión
+        </Typography>
 
         <form onSubmit={onSubmit}>
-          <Label htmlFor="email">Email</Label>
-          {errors.email && (
-            <p className="text-red-500">El email es un campo requerido.</p>
-          )}
-          <Input
-            type="email"
-            placeholder="Tu email"
-            autoComplete="email"
-            {...register("email", { required: true })}
-          />
+          <Box sx={{ mb: 2 }}>
+            <label htmlFor="email">Email</label>
+            {errors.email && <p className="text-red-500">El email es un campo requerido.</p>}
+            <TextField
+              id="email"
+              type="email"
+              placeholder="Tu email"
+              autoComplete="email"
+              {...register("email", { required: true })}
+              fullWidth
+            />
+          </Box>
 
-          <Label htmlFor="password">Contraseña</Label>
-          {errors.password && (
-            <p className="text-red-500">La contraseña es un campo requerido.</p>
-          )}
-          <Input
-            type="password"
-            placeholder="Tu contraseña"
-            autoComplete="current-password"
-            {...register("password", { required: true })}
-          />
-          <div className="flex justify-center items-center">
-            <Button type="submit" className="text-center w-96 my-8">
-              Iniciar Sesion
+          <Box sx={{ mb: 2 }}>
+            <label htmlFor="password">Contraseña</label>
+            {errors.password && <p className="text-red-500">La contraseña es un campo requerido.</p>}
+            <TextField
+              id="password"
+              type="password"
+              placeholder="Tu contraseña"
+              autoComplete="current-password"
+              {...register("password", { required: true })}
+              fullWidth
+            />
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button type="submit" variant="contained" color="secondary" sx={{ width: 200, mt: 2 }}>
+              Iniciar Sesión
             </Button>
-          </div>
+          </Box>
         </form>
 
-        {/*
-        <div className="flex justify-between my-4">
-          <p>New here ?</p>
-          <Link to="/signup">Sign Up Now</Link>
-        </div>
-          */}
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+          <Typography>Eres nuevo ?</Typography>
+          <Link to="/signup">Registrate</Link>
+        </Box>
       </Card>
     </Container>
   );

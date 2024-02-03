@@ -13,9 +13,6 @@ export const createProductSchema = z.object({
       invalid_type_error_message: "The description must be a string.",
     })
     .min(0)
-    .max(255, {
-      message: "The description must contain at most 255 characters.",
-    })
     .optional(),
 });
 

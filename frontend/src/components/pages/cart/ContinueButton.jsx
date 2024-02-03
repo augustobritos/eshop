@@ -1,12 +1,17 @@
-function ContinueButton({ onClick, formDataFilled = true }) {
+import { Button } from "@mui/material";
+
+function ContinueButton({ onClick, disabled }) {
   return (
-    <button
-    className={`bg-green-500 text-white px-4 py-3 mt-4 rounded-full w-full ${formDataFilled ? '' : 'opacity-50 cursor-not-allowed'}`}
+    <Button
+      variant="contained"
+      color="secondary"
       onClick={onClick}
-      disabled={!formDataFilled} 
+      disabled={disabled}
+      fullWidth
+      style={{ marginTop: "1rem", borderRadius: "999px" }}
     >
       Continuar
-    </button>
+    </Button>
   );
 }
 

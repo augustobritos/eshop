@@ -1,23 +1,60 @@
 import { useState, useEffect } from "react";
-
 import { useAuth } from "../../../context/AuthContext";
-import { createPreference } from "../../../api/mercadopago.api";
+import {
+  createPreferenceRequest,
+  getMercadoPagoKeyRequest,
+} from "../../../api/mercadopago.api";
 
-// UI
+// Material UI components
+import {
+  Container,
+  Card,
+  CardContent,
+  CircularProgress,
+  Typography,
+  Box,
+  Button,
+} from "@mui/material";
+
 import { MercadoPagoButton } from "../../utils/MercadoPagoButton";
 import { PaypalButton } from "../../utils/PaypalButton";
-import { Container, Card } from "../../ui/Index";
 
-function Checkout({ items, total, customerData }) {
+function Checkout({ items, total, customerData, onClick }) {
   const { getEnabledPayments } = useAuth();
   const [payments, setPayments] = useState(null);
   const [preferenceId, setPreferenceId] = useState();
+  const [publicKey, setPublicKey] = useState();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const response = await getEnabledPayments();
+        setPayments(response);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching payments:", error);
+        setError("Error fetching payments");
+        setLoading(false);
+      }
+    };
+
+    fetchPayments();
+  }, []);
 
   const payWithCash = () => {
+    onClick();
+
     const { name, email, phone, address } = customerData;
 
     const orderMessage = items
-      .map((item) => `${item.title}: x ${item.quantity} unidades $${(item.price * item.quantity)}`)
+      .map(
+        (item) =>
+          `${item.title}: x ${item.quantity} unidades $${
+            item.price * item.quantity
+          }`
+      )
       .join(".\n");
 
     const whatsappMessage = `
@@ -41,16 +78,26 @@ function Checkout({ items, total, customerData }) {
   };
 
   const payWithMercadoPago = async () => {
-    const res = await createPreference(items);
+    setLoading(true);
+    onClick();
+    try {
+      const preference = await createPreferenceRequest(items);
+      const key = await getMercadoPagoKeyRequest();
 
-    if (res) {
-      const id = res.data;
-
-      setPreferenceId(id);
+      if (preference && key) {
+        setPreferenceId(preference.data);
+        setPublicKey(key.data);
+      }
+    } catch (error) {
+      console.error("Error processing MercadoPago payment:", error);
+      setError("Error processing MercadoPago payment");
+    } finally {
+      setLoading(false);
     }
   };
 
   const payWithPaypal = async () => {
+    onClick();
     console.log("placeOrderWithPaypal");
     return <PaypalButton />;
   };
@@ -64,63 +111,113 @@ function Checkout({ items, total, customerData }) {
     console.log("Sending email to:", customerData.email);
   };
 
-  useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        const response = await getEnabledPayments();
-        setPayments(response);
-      } catch (error) {
-        console.error("Error fetching payments:", error);
-      }
-    };
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
-    fetchPayments();
-  }, []);
+  if (error) {
+    return (
+      <Typography variant="h6" color="error">
+        {error}
+      </Typography>
+    );
+  }
 
   return (
-    <Container className="relative h-[80vh] justify-center items-center mb-10">
+    <Container
+      sx={{
+        position: "relative",
+        height: "80vh",
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: "10px",
+      }}
+    >
       {!preferenceId && (
-        <Card className="flex flex-col justify-center items-center px-4 my-52">
-          <div>
-            <h2 className="text-4xl font-bold mb-4 text-center">
-              Elige tu metodo de pago
-            </h2>
-            <p className="mb-6">
-              Aceptamos varios metodos de pago para mejorar tu experiencia.
-            </p>
-          </div>
-          <div className="flex justify-center items-center gap-3 p-4 rounded-full w-full my-7">
-            <button
-              className="bg-green-500 text-white px-4 py-4 rounded-full "
-              onClick={payWithCash}
+        <Card
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "120px",
+            marginTop: "120px",
+          }}
+        >
+          <CardContent>
+            <Typography
+              variant="h4"
+              component="h2"
+              gutterBottom
+              style={{ textAlign: "center" }}
             >
+              Elige tu método de pago
+            </Typography>
+
+            <Typography paragraph align="center">
+              Aceptamos varios métodos de pago para mejorar tu experiencia.
+            </Typography>
+          </CardContent>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              padding: "20px",
+              borderRadius: "9999px",
+              width: "100%",
+              marginTop: "7px",
+            }}
+          >
+            <Button variant="contained" color="secondary" onClick={payWithCash}>
               Efectivo
-            </button>
+            </Button>
             {payments?.mercadopago === true && (
-              <button
-                className="bg-blue-500 text-white px-4 py-4 rounded-full"
+              <Button
+                variant="contained"
+                color="secondary"
                 onClick={payWithMercadoPago}
               >
                 Mercado Pago
-              </button>
+              </Button>
             )}
             {payments?.paypal === true && (
-              <button
-                className="bg-amber-500 text-white px-4 py-4 rounded-full"
+              <Button
+                variant="contained"
+                color="secondary"
                 onClick={payWithPaypal}
               >
                 Paypal
-              </button>
+              </Button>
             )}
-          </div>
+          </Box>
         </Card>
       )}
 
-      {preferenceId && (
-        <div className="p-auto">
-          {/* Assuming MercadoPagoButton is a component to handle Mercado Pago payments */}
-          <MercadoPagoButton preferenceId={preferenceId} />
-        </div>
+      {preferenceId && publicKey && (
+        <Box
+          sx={{
+            padding: "40px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <MercadoPagoButton
+            preferenceId={preferenceId}
+            publicKey={publicKey}
+          />
+        </Box>
       )}
     </Container>
   );

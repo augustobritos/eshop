@@ -1,31 +1,76 @@
-import { Card } from "../ui/Card";
+import { Card, Typography } from "@mui/material";
 
 function About() {
-  const about = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias optio suscipit praesentium. Libero laboriosam voluptas excepturi dolor pariatur vero dignissimos necessitatibus iste repellat assumenda rem, odio neque sunt magnam labore?";
+  const about =
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias optio suscipit praesentium. Libero laboriosam voluptas excepturi dolor pariatur vero dignissimos necessitatibus iste repellat assumenda rem, odio neque sunt magnam labore?";
 
-  const products = ["Product 1" , "Product 2", "Product 3", "Product 4"];
+  const products = ["Product 1", "Product 2", "Product 3", "Product 4"];
 
   const benefits = [
-    "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iusto fuga maxime magni pariatur ullam nihil eligendi itaque quo, vel porro soluta ratione illum expedita consectetur, quidem libero repellendus consequuntur consequatur!"
+    "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iusto fuga maxime magni pariatur ullam nihil eligendi itaque quo, vel porro soluta ratione illum expedita consectetur, quidem libero repellendus consequuntur consequatur!",
   ];
 
   return (
-    <Card className="py-14">
-      <h1 className="font-bold justify-center text-4xl py-4 text-center text-green-400">
+    <Card sx={{ marginTop: 10, marginBottom:10 }}>
+      <Typography
+        variant="h3"
+        sx={{
+          fontWeight: "bold",
+          textAlign: "center",
+          padding: 4,
+        }}
+        gutterBottom
+      >
         Sobre Nosotros...
-      </h1>
-      <h2 className="px-2 py-4 text-2xl">{about}</h2>
-      <h1 className="font-bold justify-center text-2xl px-3 py-4 text-center">
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{ paddingX: 2, paddingY: 4, fontSize: "2xl" }}
+        gutterBottom
+      >
+        {about}
+      </Typography>
+      <Typography
+        variant="h4"
+        component="h2"
+        sx={{
+          fontWeight: "bold",
+          fontSize: "2xl",
+          textAlign: "center",
+          paddingTop: 4,
+          paddingBottom: 4,
+        }}
+        gutterBottom
+      >
         Nuestros Productos
-      </h1>
+      </Typography>
       {products.map((tech, index) => (
-        <h3 key={index} className="py-2">⭐ {tech}</h3>
+        <Typography key={index} variant="body1" sx={{ padding: 2 }}>
+          ⭐ {tech}
+        </Typography>
       ))}
-      <h1 className="font-bold justify-center text-2xl py-4 text-center">
+      <Typography
+        variant="h4"
+        component="h2"
+        sx={{
+          fontWeight: "bold",
+          fontSize: "2xl",
+          textAlign: "center",
+          paddingTop: 4,
+          paddingBottom: 4,
+        }}
+        gutterBottom
+      >
         Beneficios
-      </h1>
+      </Typography>
       {benefits.map((feature, index) => (
-        <p key={index} className="px-2 py-4">🐲 {feature}</p>
+        <Typography
+          key={index}
+          variant="body1"
+          sx={{ paddingX: 2, paddingY: 4 }}
+        >
+          🐲 {feature}
+        </Typography>
       ))}
     </Card>
   );

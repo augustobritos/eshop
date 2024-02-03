@@ -1,136 +1,146 @@
-import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProducts } from "../../context/ProductsContext";
-import { Container, Card, Input, TextArea, Label, Button } from "../ui/Index";
+import { Container, Card, TextField, Button } from "@material-ui/core";
 
 function ProductForm() {
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm();
-
-  const {
     createProduct,
-    getProduct,
+    getProductById,
     updateProduct,
     fileUpload,
     errors: productErrors,
   } = useProducts();
   const navigate = useNavigate();
-
-  const onSubmit = handleSubmit(async (data) => {
-    
-    if (!window.confirm("Estas seguro que deseas agregar este producto?")) {
-      return;
-    }
-
-    if (!params.id) {
-      const res = await createProduct(data);
-      console.log(res);
-      navigate("/admin");
-    } else {
-      const product = await updateProduct(params.id, data);
-      if (product) {
-        navigate("/admin");
-      }
-    }
+  const params = useParams();
+  const [fileLink, setFileLink] = useState("");
+  const [formData, setFormData] = useState({
+    title: "",
+    price: "",
+    quantity: "",
+    description: "",
   });
 
-  const onImageSelect = async (e) => {
-    try {
-      if (e.target.files && e.target.files.length > 0) {
-        const file = e.target.files[0];
-        const link = await fileUpload(file);
-
-        // Update state with callback function
-        setFileLink((prevLink) => {
-          // Use the updated state to set the value
-          setValue("image", link);
-
-          // Return the new state
-          return link;
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const params = useParams();
   const title = params.id ? "Editar Producto" : "Agregar Producto";
   const button = params.id ? "Actualizar" : "Agregar Producto";
 
-  const [fileLink, setFileLink] = useState("");
-
   useEffect(() => {
     if (params.id) {
-      getProduct(params.id)
+      getProductById(params.id)
         .then((product) => {
-          setValue("title", product.title);
-          setValue("description", product.description);
+          setFormData({
+            title: product.title,
+            price: product.price,
+            quantity: product.quantity,
+            description: product.description,
+          });
         })
         .catch((error) => {
           console.error(error.message);
         });
     }
-  }, []);
+  }, [getProductById, params.id]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!window.confirm("Estas seguro que deseas agregar este producto?")) {
+      return;
+    }
+
+    if (!params.id) {
+      const res = await createProduct(formData);
+      if(res) {
+        console.log(res);
+      }
+    } else {
+      const product = await updateProduct(params.id, formData);
+      if (product) {
+        navigate("/admin");
+      }
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageSelect = async (e) => {
+    try {
+      if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const link = await fileUpload(file);
+        setFileLink(link);
+        setFormData({ ...formData, image: link });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Container className="relative h-[80vh] justify-center items-center cont">
       <Card className="px-4">
-        {productErrors.map((error) => (
-          <p key={error} className="bg-red-500 text-center p-2">
+        {productErrors.map((error, index) => (
+          <p key={index} className="bg-red-500 text-center p-2">
             {error}
           </p>
         ))}
         <div className="flex justify-center items-center">
           <h1 className="text-4xl font-bold my-10">{title}</h1>
         </div>
-        <form onSubmit={onSubmit} className="my-4 relative">
-          <Label htmlFor="title" className="relative text-center">
-            Producto
-          </Label>
-          <Input
-            type="text"
-            placeholder="Nombre"
-            autoFocus
-            {...register("title", { required: true })}
+        <form onSubmit={handleSubmit} className="my-4 relative">
+          <TextField
+            label="Producto"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            fullWidth
+            required
           />
-          <Label htmlFor="price">Precio</Label>
-          <Input
-            type="text"
-            placeholder="Precio"
-            autoFocus
-            {...register("price", { required: true })}
+          <TextField
+            label="Precio"
+            name="price"
+            value={formData.price}
+            onChange={handleInputChange}
+            fullWidth
+            required
           />
-          {errors.title && (
-            <p className="text-red-500 text-xs">
-              El titulo es un campo requerido.
-            </p>
-          )}
+          <TextField
+            label="Unidades"
+            name="quantity"
+            value={formData.quantity}
+            onChange={handleInputChange}
+            fullWidth
+            required
+          />
+          <TextField
+            label="Descripcion"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            fullWidth
+            multiline
+            minRows={3}
+          />
 
-          <Label htmlFor="description">Descripcion</Label>
-          <TextArea
-            placeholder="Descripcion"
-            rows={3}
-            {...register("description", { required: false })}
-          />
-
-          <Label htmlFor="image">Imagen</Label>
-          <Input
+          <input
             type="file"
-            placeholder="Imagen"
-            autoFocus
-            onChange={onImageSelect}
+            accept="image/*"
+            onChange={handleImageSelect}
+            style={{ marginBottom: "10px" }}
           />
-
-          {fileLink && <img src={fileLink} width={400} height={400} />}
-
+          {fileLink && (
+            <img src={fileLink} alt="Product" width={400} height={400} />
+          )}
           <div className="flex justify-center items-center">
-            <Button className="w-96 text-center">{button}</Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              className="w-96 text-center"
+              type="submit"
+            >
+              {button}
+            </Button>
           </div>
         </form>
       </Card>

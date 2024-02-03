@@ -1,21 +1,40 @@
-import {Card} from "../ui/Index";
+import { Card, Box, Typography } from "@mui/material";
 
 function Contact() {
   return (
-    <Card className="max-w-md mx-auto bg-white rounded-3xl shadow-md overflow-hidden md:max-w-3xl py-10">
-      <div className="md:flex my-10">
-        <div className="md:flex-shrink-0">
-          <img className="h-48 w-full object-cover md:w-48 p-5" src="contacto.png" alt="Contact"/>
-        </div>
-        <div className="p-8">
-          <div className="uppercase tracking-wide text-sm text-green-500 font-semibold mb-4 flex justify-center items-center">Contactanos</div>
-          <p className="mt-2 text-gray-500 mb-4">Puedes contactarte via sms, llamada o Whatsapp.</p>
-          <p className="mt-2 text-gray-500 mb-4">Nuestros horarios de atencion son</p>
-          <p>Lunes a Viernes de 9:00 a 12:00 y de 14:00 a 18:00.</p>
-        </div>
-      </div>
+    <Card sx={{ maxHeight: "md", mx: "auto", py: 10, my: 10 }}>
+      <Box display="flex" m={1} p={1} justifyContent="center">
+        <Box flex="none">
+          <img
+            height="80px"
+            width="100%"
+            style={{ objectFit: "cover", padding: "5px" }}
+            src="contacto.png"
+            alt="Contact"
+          />
+        </Box>
+        <Box p={1} marginTop={25}>
+          <Typography
+            variant="subtitle1"
+            color="primary"
+            align="center"
+            gutterBottom
+          >
+            Contactanos
+          </Typography>
+          <Typography variant="body1" color="text.secondary" gutterBottom>
+            Puedes contactarte vía SMS, llamada o WhatsApp.
+          </Typography>
+          <Typography variant="body1" color="text.secondary" gutterBottom>
+            Nuestros horarios de atención son:
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            Lunes a Viernes de 9:00 a 12:00 y de 14:00 a 18:00.
+          </Typography>
+        </Box>
+      </Box>
     </Card>
-  )
+  );
 }
 
-export default Contact
+export default Contact;

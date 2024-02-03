@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Route, Routes, Outlet } from "react-router-dom";
+
+import CssBaseline from "@mui/material/CssBaseline";
 
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -17,79 +20,105 @@ import ProductView from "./components/ui/products/ProductView";
 import Cart from "./components/pages/cart/Cart";
 import Checkout from "./components/pages/cart/Checkout";
 import SuccessPayment from "./components/pages/cart/SuccessPayment";
-import ErrorPayment from "./components/pages/cart/ErrorPayment";
+import FailurePayment from "./components/pages/cart/FailurePayment";
 import ProductForm from "./components/admin/ProductForm";
 import Footer from "./components/pages/Footer";
 import NotFound from "./components/pages/NotFound";
-import { Container } from "./components/ui/Container";
-
 import ProductsAdmin from "./components/admin/ProductsAdmin";
-
 import WhatsappButton from "./components/ui/WhatsappButton";
+import { Grid, Container, ThemeProvider, createTheme } from "@mui/material";
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
   const { isAuth, loading } = useAuth();
 
   if (loading) {
     return <h1>Loading...</h1>;
   }
+
+  const toggleDarkMode = () => {
+    setDarkMode((prevDarkMode) => !prevDarkMode);
+  };
+
+  // Define light and dark themes
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? "dark" : "light",
+    },
+  });
+
   return (
     <>
-      <Navbar />
-      <Container className="py-24">
-        <Routes>
-          {/* Public - Protected Routes */}
-          <Route
-            element={
-              <ProtectedRoute isAllowed={!isAuth} redirectTo="/signin" />
-            }
-          >
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
-          </Route>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        <Container sx={{ paddingTop: "150px", minHeight: '100vh',
+  display: 'flex',
+  flexDirection: 'column', }} maxWidth="lg">
+          <Grid container spacing={2}>
+            
+              <Routes>
+                {/* Public - Protected Routes */}
+                <Route
+                  element={
+                    <ProtectedRoute isAllowed={!isAuth} redirectTo="/signin" />
+                  }
+                >
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/signin" element={<SignIn />} />
+                </Route>
 
-          {/* Private - Protected Routes */}
-          <Route
-            element={<ProtectedRoute isAllowed={isAuth} redirectTo="/signin" />}
-          >
-            <Route path="/profile" element={<Profile />} />
+                {/* Private - Protected Routes */}
+                <Route
+                  element={
+                    <ProtectedRoute isAllowed={isAuth} redirectTo="/signin" />
+                  }
+                >
+                  <Route path="/profile" element={<Profile />} />
 
-            <Route
-              element={
-                <ProductsProvider>
-                  <Outlet />
-                </ProductsProvider>
-              }
-            >
-              <Route path="/products/create" element={<ProductForm />} />
-              <Route path="/products/edit/:id" element={<ProductForm />} />
-              <Route path="/admin" element={<ProductsAdmin />} />
-            </Route>
-          </Route>
+                  <Route
+                    element={
+                      <ProductsProvider>
+                        <Outlet />
+                      </ProductsProvider>
+                    }
+                  >
+                    <Route path="/products/create" element={<ProductForm />} />
+                    <Route
+                      path="/products/edit/:id"
+                      element={<ProductForm />}
+                    />
+                    <Route path="/admin" element={<ProductsAdmin />} />
+                  </Route>
+                </Route>
 
-          {/* Public - Non Protected Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/success" element={<SuccessPayment />} />
-          <Route path="/error_payment" element={<ErrorPayment />} />
-          <Route path="*" element={<NotFound />} />
-          <Route
-            element={
-              <ProductsProvider>
-                <Outlet />
-              </ProductsProvider>
-            }
-          >
-            <Route path="/products" element={<Products />} />
-            <Route path="/product/:id" element={<ProductView />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-          </Route>
-        </Routes>
-      </Container>
-      <WhatsappButton className="fixed bottom-4 right-4" />
-      <Footer />
+                {/* Public - Non Protected Routes */}
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/success" element={<SuccessPayment />} />
+                <Route path="/failure" element={<FailurePayment />} />
+                <Route path="*" element={<NotFound />} />
+                <Route
+                  element={
+                    <ProductsProvider>
+                      <Outlet />
+                    </ProductsProvider>
+                  }
+                >
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/product/:id" element={<ProductView />} />
+                  <Route path="/cart" element={<Cart theme={theme} />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                </Route>
+              </Routes>
+          
+          </Grid>
+        </Container>
+        <Footer darkMode={darkMode} />
+        <WhatsappButton className="fixed bottom-4 right-4" />
+      </ThemeProvider>
     </>
   );
 }

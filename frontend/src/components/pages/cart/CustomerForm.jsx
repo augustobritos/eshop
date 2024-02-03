@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Card, Input, Label } from "../../ui/Index";
+import { Grid, Card, TextField, ThemeProvider } from "@material-ui/core";
 
-function CustomerForm({ onFormDataChange }) {
+function CustomerForm({ handleFormDataChange, theme }) {
   const [customerData, setCustomerData] = useState({
     name: "",
     email: "",
@@ -9,77 +9,76 @@ function CustomerForm({ onFormDataChange }) {
     address: "",
   });
 
-  const onInputChange = (e) => {
+  // Update the customer data and notify parent component of changes
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCustomerData({ ...customerData, [name]: value });
-    onFormDataChange({ ...customerData, [name]: value });
+    const updatedData = { ...customerData, [name]: value };
+    setCustomerData(updatedData);
+    handleFormDataChange(updatedData);
   };
 
+  // Notify parent component of initial form data
   useEffect(() => {
-    // Call the onFormDataChange function with the initial form data
-    onFormDataChange(customerData);
-  }, []); 
+    handleFormDataChange(customerData);
+  }, []);
 
   return (
-    <Card className="mb-5 border border-solid border-gray-300 rounded-2xl p-4 shadow-md">
-      {/*RIGHT SIDE */}
-      {/* Customer data input fields */}
-      <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
-        Nombre
-      </Label>
-      <Input
-        type="text"
-        name="name"
-        id="name"
-        className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm"
-        value={customerData.name}
-        onChange={onInputChange}
-      />
-      <Label
-        htmlFor="email"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Email
-      </Label>
-      <Input
-        type="email"
-        name="email"
-        id="email"
-        autoComplete="email"
-        className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm"
-        value={customerData.email}
-        onChange={onInputChange}
-      />
-      <Label
-        htmlFor="phone"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Telefono
-      </Label>
-      <Input
-        type="text"
-        name="phone"
-        id="phone"
-        autoComplete="phone"
-        className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm"
-        value={customerData.phone}
-        onChange={onInputChange}
-      />
-      <Label
-        htmlFor="address"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Direccion
-      </Label>
-      <textarea
-        id="address"
-        name="address"
-        rows={3}
-        className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm"
-        value={customerData.address}
-        onChange={onInputChange}
-      />
-    </Card>
+    <ThemeProvider theme={theme}>
+      <Card style={{ marginTop: '100px', marginBottom: '50px' }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="name"
+              name="name"
+              label="Nombre"
+              variant="outlined"
+              className="mt-1 mb-2"
+              value={customerData.name}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="email"
+              name="email"
+              label="Email"
+              variant="outlined"
+              className="mt-1 mb-2"
+              value={customerData.email}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="phone"
+              name="phone"
+              label="Telefono"
+              variant="outlined"
+              className="mt-1 mb-2"
+              value={customerData.phone}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="address"
+              name="address"
+              label="Direccion"
+              multiline
+              minRows={3}
+              variant="outlined"
+              className="mt-1"
+              value={customerData.address}
+              onChange={handleInputChange}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+      </Card>
+    </ThemeProvider>
   );
 }
 

@@ -1,75 +1,124 @@
+import { useState } from 'react';
+import { AppBar, Toolbar, Typography, IconButton, Button, Avatar, Drawer, List, ListItem, ListItemIcon, ListItemText, ListItemButton, Hidden } from '@mui/material';
 import { Link, useLocation } from "react-router-dom";
+import MenuIcon from '@mui/icons-material/Menu';
 import { publicRoutes, privateRoutes } from "./Navigation";
-import { Container } from "../ui/Container";
 import { useAuth } from "../../context/AuthContext";
-import { LiaSignOutAltSolid } from "react-icons/lia";
 
-function Navbar() {
+import Brightness4Icon from '@mui/icons-material/Brightness4'; // Icon for dark mode
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+
+function Navbar({ darkMode, toggleDarkMode }) {
   const location = useLocation();
   const { isAuth, user, signOut } = useAuth();
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpenDrawer(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
 
   return (
     <>
-      <nav className="bg-green-100">
-        <Container className="flex flex-col md:flex-row justify-between items-center py-5">
-          <Link to="/">
-            <h1 className="text-2xl font-bold text-slate-950">Tienda</h1>
-          </Link>
-          <ul className="flex gap-x-1 items-center justify-center">
-            {isAuth ? (
-              <>
-                {privateRoutes.map(({ name, path, icon }) => (
-                  <li key={path}>
-                    <Link
+      <AppBar position="static" color='secondary'>
+        <Toolbar>
+          <Hidden mdUp>
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleDrawerOpen} sx={{ mr: 2 }}>
+              <MenuIcon />
+            </IconButton>
+          </Hidden>
+          <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1 }}>
+            Tienda
+          </Typography>
+          <IconButton color="inherit" onClick={toggleDarkMode}>
+          {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+        </IconButton>
+          <Hidden smDown>
+            <div>
+              {isAuth ? (
+                <>
+                  {privateRoutes.map(({ name, path, icon }) => (
+                    <Button
+                      key={path}
+                      component={Link}
                       to={path}
-                      className={
-                        location.pathname === path
-                          ? "text-emerald-400 items-center flex px-4 py-2 gap-x-2"
-                          : "text-slate-950 items-center flex px-4 py-2 gap-x-2"
-                      }
+                      color={location.pathname === path ? "success" : "inherit"}
+                      sx={{ mx: 1 }}
+                      startIcon={icon}
                     >
-                      {icon}
-                      <p className="hidden sm:block">{name}</p>
-                    </Link>
-                  </li>
-                ))}
-
-                <li className="flex px-8 items-center justify-center">
-                  <Link to="/profile">
-                    <img
-                      src={user.gravatar}
-                      alt=""
-                      className="h-8 w-8 rounded-full"
-                    />
-                    <span className="font-medium">{user.name}</span>
-                  </Link>
-                </li>
-
-                <li
-                  onClick={signOut}
-                  className="hover:cursor-pointer flex flex-col items-center px-3 py-1 gap-x-1"
-                >
-                  <LiaSignOutAltSolid className="h-7 w-7" />
-                  <span className="font-medium">Salir</span>
-                </li>
-              </>
-            ) : (
-              publicRoutes.map(({ name, path, icon }) => (
-                <li
+                      {name}
+                    </Button>
+                  ))}
+                  <Button component={Link} to="/profile" color="inherit" sx={{ mx: 1 }}>
+                    <Avatar alt={user.name} src={user.gravatar} />
+                    {user.name}
+                  </Button>
+                  <Button color="inherit" onClick={signOut}>Salir{''} <ExitToAppIcon /></Button>
+                </>
+              ) : (
+                publicRoutes.map(({ name, path, icon }) => (
+                  <Button
+                    key={path}
+                    component={Link}
+                    to={path}
+                    color={location.pathname === path ? "error" : "inherit"}
+                    sx={{ mx: 1 }}
+                    startIcon={icon}
+                  >
+                    {name}
+                  </Button>
+                ))
+              )}
+            </div>
+          </Hidden>
+        </Toolbar>
+      </AppBar>
+      <Drawer anchor="left" open={openDrawer} onClose={handleDrawerClose}>
+        <List>
+          {isAuth ? (
+            <>
+              {privateRoutes.map(({ name, path, icon }) => (
+                <ListItemButton
+                  
                   key={path}
-                  className={
-                    location.pathname === path
-                      ? "text-emerald-400 items-center flex px-4 py-2 gap-x-2"
-                      : "text-slate-950 items-center flex px-4 py-2 gap-x-2"
-                  }
+                  component={Link}
+                  to={path}
+                  selected={location.pathname === path}
                 >
-                  <Link to={path}>{name}<span className="text-3xl">{icon}</span></Link>
-                </li>
-              ))
-            )}
-          </ul>
-        </Container>
-      </nav>
+                  <ListItemIcon>{icon}</ListItemIcon>
+                  <ListItemText primary={name} />
+                </ListItemButton>
+              ))}
+              <ListItemButton component={Link} to="/profile">
+                <ListItemIcon>
+                  <Avatar alt={user.name} src={user.gravatar} />
+                </ListItemIcon>
+                <ListItemText primary={user.name} />
+              </ListItemButton>
+              <ListItemButton onClick={signOut}>
+                <ListItemText primary="Salir" />
+              </ListItemButton>
+            </>
+          ) : (
+            publicRoutes.map(({ name, path, icon }) => (
+              <ListItemButton
+                
+                key={path}
+                component={Link}
+                to={path}
+                selected={location.pathname === path}
+              >
+                <ListItemText primary={name} />
+                <ListItemIcon>{icon}</ListItemIcon>
+              </ListItemButton>
+            ))
+          )}
+        </List>
+      </Drawer>
     </>
   );
 }
