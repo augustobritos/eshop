@@ -26,7 +26,7 @@ const SuccessPayment = () => {
         mx: "auto",
         boxShadow: "md",
         overflow: "hidden",
-        my: 10,
+        
       }}
     >
       <Box display="flex" m={1} p={1}>
@@ -39,7 +39,7 @@ const SuccessPayment = () => {
             alt="Transaction"
           />
         </Box>
-        <Box p={1} mt={1}>
+        <Box p={1} mt={30}>
           <Typography
             variant="subtitle1"
             color="primary"

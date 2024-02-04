@@ -29,7 +29,7 @@ import WhatsappButton from "./components/ui/WhatsappButton";
 import { Grid, Container, ThemeProvider, createTheme } from "@mui/material";
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   const { isAuth, loading } = useAuth();
 
@@ -41,7 +41,6 @@ function App() {
     setDarkMode((prevDarkMode) => !prevDarkMode);
   };
 
-  // Define light and dark themes
   const theme = createTheme({
     palette: {
       mode: darkMode ? "dark" : "light",
@@ -53,53 +52,35 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <Container sx={{ paddingTop: "150px", minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column', }} maxWidth="lg">
+        <Container
+          sx={{
+            paddingTop: "150px",
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+          maxWidth="lg"
+        >
           <Grid container spacing={2}>
-            
-              <Routes>
-                {/* Public - Protected Routes */}
-                <Route
-                  element={
-                    <ProtectedRoute isAllowed={!isAuth} redirectTo="/signin" />
-                  }
-                >
-                  <Route path="/signup" element={<SignUp />} />
-                  <Route path="/signin" element={<SignIn />} />
-                </Route>
+            <Routes>
+              {/* Public - Protected Routes */}
+              <Route
+                element={
+                  <ProtectedRoute isAllowed={!isAuth} redirectTo="/signin" />
+                }
+              >
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/signin" element={<SignIn />} />
+              </Route>
 
-                {/* Private - Protected Routes */}
-                <Route
-                  element={
-                    <ProtectedRoute isAllowed={isAuth} redirectTo="/signin" />
-                  }
-                >
-                  <Route path="/profile" element={<Profile />} />
+              {/* Private - Protected Routes */}
+              <Route
+                element={
+                  <ProtectedRoute isAllowed={isAuth} redirectTo="/signin" />
+                }
+              >
+                <Route path="/profile" element={<Profile />} />
 
-                  <Route
-                    element={
-                      <ProductsProvider>
-                        <Outlet />
-                      </ProductsProvider>
-                    }
-                  >
-                    <Route path="/products/create" element={<ProductForm />} />
-                    <Route
-                      path="/products/edit/:id"
-                      element={<ProductForm />}
-                    />
-                    <Route path="/admin" element={<ProductsAdmin />} />
-                  </Route>
-                </Route>
-
-                {/* Public - Non Protected Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/success" element={<SuccessPayment />} />
-                <Route path="/failure" element={<FailurePayment />} />
-                <Route path="*" element={<NotFound />} />
                 <Route
                   element={
                     <ProductsProvider>
@@ -107,13 +88,32 @@ function App() {
                     </ProductsProvider>
                   }
                 >
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/product/:id" element={<ProductView />} />
-                  <Route path="/cart" element={<Cart theme={theme} />} />
-                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/products/create" element={<ProductForm />} />
+                  <Route path="/products/edit/:id" element={<ProductForm />} />
+                  <Route path="/admin" element={<ProductsAdmin />} />
                 </Route>
-              </Routes>
-          
+              </Route>
+
+              {/* Public - Non Protected Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/success" element={<SuccessPayment />} />
+              <Route path="/failure" element={<FailurePayment />} />
+              <Route path="*" element={<NotFound />} />
+              <Route
+                element={
+                  <ProductsProvider>
+                    <Outlet />
+                  </ProductsProvider>
+                }
+              >
+                <Route path="/products" element={<Products />} />
+                <Route path="/product/:id" element={<ProductView />} />
+                <Route path="/cart" element={<Cart theme={theme} />} />
+                <Route path="/checkout" element={<Checkout />} />
+              </Route>
+            </Routes>
           </Grid>
         </Container>
         <Footer darkMode={darkMode} />

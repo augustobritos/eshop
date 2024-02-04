@@ -5,7 +5,6 @@ import { getAwsConfig } from "../config/index.js";
 export default async function createPresignedPost({ key, contentType }) {
   try {
     const config = await getAwsConfig();
-    console.log(config);
     const BUCKET_NAME = process.env.BUCKET_NAME;
     const REGION = process.env.REGION;
 
@@ -16,8 +15,6 @@ export default async function createPresignedPost({ key, contentType }) {
         secretAccessKey: config.AWS.SECRET_ACCESS_KEY,
       },
     });
-
-    console.log(s3.config.credentials); // logs [Function (anonymous)]
 
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,

@@ -63,12 +63,16 @@ const createPreference = async (req, res, next) => {
 const getMercadoPagoKey = async (req, res, next) => {
   try {
     const config = await getMercadoPagoConfig();
-    if(config) {
-      res.send(config.MP.PUBLIC_KEY);
+    if (config && config.MP && config.MP.PUBLIC_KEY) {
+      return res.send(config.MP.PUBLIC_KEY).status(204);
+    } else {
+      return res.status(500).json({
+        message: "MercadoPago public key not found",
+      });
     }
   } catch (error) {
-    console.error(error);
-    next();
+    console.error('Error retrieving MercadoPago configuration:', error);
+    next(error);
   }
 }
 

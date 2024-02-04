@@ -83,7 +83,6 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   const user = req.body;
-  console.log(user);
   try {
     const userRef = firestore.collection("users").doc(req.userId);
     const userDoc = await userRef.get();
@@ -114,7 +113,6 @@ const getEnabledPayments = async (req, res) => {
 
 const updateEnabledPayments = async (req, res) => {
   try {
-    console.log(req.body);
     const userRef = firestore.collection("payments").doc("enabled");
     const userDoc = await userRef.get();
 

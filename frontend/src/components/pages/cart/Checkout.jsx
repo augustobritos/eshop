@@ -204,7 +204,7 @@ function Checkout({ items, total, customerData, onClick }) {
         </Card>
       )}
 
-      {preferenceId && publicKey && (
+      {(preferenceId) && (
         <Box
           sx={{
             padding: "40px",

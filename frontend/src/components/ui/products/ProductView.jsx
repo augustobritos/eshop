@@ -8,9 +8,9 @@ import {
   Card,
   Button,
   Typography,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { fetchProduct } from "../../../redux/middlewares/stockThunk.js";
 
 function ProductView() {
@@ -37,10 +37,10 @@ function ProductView() {
         setLoading(false);
       }
     };
-  
-    fetch(); 
+
+    fetch();
   }, [params.id]);
-  
+
   return (
     <Container maxWidth="md">
       <Card sx={{ mx: "auto", my: 4, py: 4, boxShadow: 8 }}>
@@ -58,7 +58,7 @@ function ProductView() {
         ) : (
           <>
             <Typography variant="h4" align="center" gutterBottom>
-              {product.title}
+              {product ? product.title : ""}
             </Typography>
             <Box
               sx={{
@@ -78,10 +78,15 @@ function ProductView() {
               />
             </Box>
             <Typography variant="h6" align="center" gutterBottom>
-              $ {product.price}
+              $ {product ? product.price : ""}
             </Typography>
-            <Typography variant="body1" align="center" gutterBottom sx={{ padding:2 }}>
-              {product.description}
+            <Typography
+              variant="body1"
+              align="center"
+              gutterBottom
+              sx={{ padding: 2 }}
+            >
+              {product ? product.description : ""}
             </Typography>
             <Box
               sx={{

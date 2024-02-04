@@ -27,7 +27,7 @@ const getProducts = async (req, res) => {
     const products = snapshot.docs.map((doc) => {
       const id = doc.id;
       const data = doc.data();
-      return { id, ...data }; // Include document ID in each product object
+      return { id, ...data }; 
     });
     res.status(200).json(products);
   } catch (error) {

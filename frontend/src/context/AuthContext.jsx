@@ -72,7 +72,6 @@ export function AuthProvider({ children }) {
   };
 
   const updateProfile = async (data) => {
-    console.log("updateProfile");
     try {
       const res = await updateProfileRequest(data);
       return res.data;
@@ -98,9 +97,7 @@ export function AuthProvider({ children }) {
 
   const updateEnabledPayments = async (payments) => {
     try {
-      console.log("updateEnabledPayments");
       const res = await updateEnabledPaymentsRequest(payments);
-      console.log(res.data);
       return res.data;
     } catch (error) {
       console.error(error);

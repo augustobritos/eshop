@@ -70,7 +70,7 @@ const Profile = () => {
 
   return (
     <Container>
-      <Grid container justify="center" alignItems="center" style={{ minHeight: '100vh' }}>
+      <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
         <Grid item xs={12} md={8} lg={6}>
           <Card variant="outlined" style={{ padding: '20px' }}>
             <h2 className="text-2xl font-semibold mb-4">My Profile</h2>

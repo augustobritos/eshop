@@ -14,7 +14,6 @@ const getConfigFromSecret = async (secretName) => {
 export const getAwsConfig = async () => {
   try {
     const response = await getConfigFromSecret("AWS");
-    console.log(response.AWS); // logs credentials OK
 
     if (!response || !response.AWS.ACCESS_KEY_ID || !response.AWS.SECRET_KEY) {
       throw new Error("Invalid AWS configuration");
