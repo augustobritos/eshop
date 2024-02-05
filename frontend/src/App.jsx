@@ -25,6 +25,7 @@ import ProductForm from "./components/admin/ProductForm";
 import Footer from "./components/pages/Footer";
 import NotFound from "./components/pages/NotFound";
 import ProductsAdmin from "./components/admin/ProductsAdmin";
+import OrdersManagement from "./components/admin/OrdersManagement";
 import WhatsappButton from "./components/ui/WhatsappButton";
 import { Grid, Container, ThemeProvider, createTheme } from "@mui/material";
 
@@ -80,7 +81,7 @@ function App() {
                 }
               >
                 <Route path="/profile" element={<Profile />} />
-
+                <Route path="/orders" element={<OrdersManagement theme={theme}/>} />
                 <Route
                   element={
                     <ProductsProvider>

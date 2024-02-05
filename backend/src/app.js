@@ -6,6 +6,7 @@ import productRoutes from "./router/products.routes.js";
 import authRoutes from "./router/auth.routes.js";
 import s3Routes from "./router/s3.routes.js";
 import paymentRoutes from "./router/payment.routes.js";
+import orderRoutes from "./router/orders.routes.js";
 
 // Libraries
 import morgan from "morgan";
@@ -35,6 +36,7 @@ app.use("/api", productRoutes);
 app.use("/api", authRoutes);
 app.use("/api/s3", s3Routes);
 app.use("/api", paymentRoutes);
+app.use("/api", orderRoutes);
 
 // Middleware for error for handling internal server errors
 app.use((err, req, res, next) => {

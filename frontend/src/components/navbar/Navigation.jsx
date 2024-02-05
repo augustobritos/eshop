@@ -33,4 +33,8 @@ export const privateRoutes = [
     path: "/products/create",
     icon: <AddIcon />,
   },
+  {
+    name: "Orders",
+    path: "/orders"
+  }
 ];

@@ -5,6 +5,8 @@ import {
   getMercadoPagoKeyRequest,
 } from "../../../api/mercadopago.api";
 
+import { saveOrderRequest } from "../../../api/orders.api";
+
 // Material UI components
 import {
   Container,
@@ -45,7 +47,7 @@ function Checkout({ items, total, customerData, onClick }) {
 
   const payWithCash = () => {
     onClick();
-
+    saveOrder();
     const { name, email, phone, address } = customerData;
 
     const orderMessage = items
@@ -105,6 +107,26 @@ function Checkout({ items, total, customerData, onClick }) {
   const handlePaymentSuccess = (customerData) => {
     // Send email containing order details to the customer
     sendEmail(customerData);
+  };
+
+  const saveOrder = async () => {
+    const order = {
+      customer: customerData,
+      cart: items,
+      total: total,
+      status: "pending",
+    };
+
+    try {
+      const res = await saveOrderRequest(order);
+
+      if (!res) {
+        setError(res);
+      }
+    } catch (error) {
+      console.error(error);
+      setError(error);
+    }
   };
 
   const sendEmail = (customerData) => {
@@ -204,7 +226,7 @@ function Checkout({ items, total, customerData, onClick }) {
         </Card>
       )}
 
-      {(preferenceId) && (
+      {preferenceId && (
         <Box
           sx={{
             padding: "40px",
