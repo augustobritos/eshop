@@ -13,7 +13,7 @@ import {
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
 function ProductsCard({ product }) {
-  const { id, title, image, price } = product;
+  const { id, title, images, price } = product;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ function ProductsCard({ product }) {
   <CardMedia
     component="img"
     alt="Product"
-    image={image}
+    image={images[0]}
     title={title}
     sx={{ maxHeight: 200, objectFit: 'cover', minHeight: 300 }}
   />

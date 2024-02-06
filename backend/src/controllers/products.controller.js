@@ -1,7 +1,7 @@
 import { firestore } from "../config/firebase.js";
 
 const createProduct = async (req, res, next) => {
-  const { title, description, price, quantity, image } = req.body;
+  const { title, description, price, quantity, images } = req.body;
 
   try {
     const docRef = firestore.collection("products").doc();
@@ -11,7 +11,7 @@ const createProduct = async (req, res, next) => {
       description,
       price,
       quantity,
-      image,
+      images,
     });
 
     res.json(docRef.id);
@@ -47,11 +47,11 @@ const getProductById = async (req, res) => {
 
     res.status(200).json({
       id: doc.id,
-      description: productData.description,
-      image: productData.image,
-      price: productData.price,
-      quantity: productData.quantity,
       title: productData.title,
+      price: productData.price,
+      description: productData.description,
+      quantity: productData.quantity,
+      images: productData.images,
     });
   } catch (error) {
     console.error("Error getting product:", error);
@@ -61,15 +61,16 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, price, quantity, description, images } = req.body;
     const id = req.params.id;
 
     const productRef = firestore.collection("products").doc(id);
     await productRef.update({
       title: title,
-      description: description,
       price: price,
-      image: image,
+      quantity: quantity,
+      description: description,
+      images: images,
     });
 
     return res.json({ message: "Producto actualizado exitosamente." });

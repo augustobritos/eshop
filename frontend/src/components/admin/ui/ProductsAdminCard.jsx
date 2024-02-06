@@ -1,61 +1,72 @@
-import { Card, Button, Typography, IconButton } from '@material-ui/core';
 import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../../../context/ProductsContext';
+import {
+  Grid,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Button,
+  Typography
+} from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
 function ProductsAdminCard({ product }) {
   const { deleteProduct } = useProducts();
   const navigate = useNavigate();
 
-  const { id, title, image, price, quantity, description } = product;
+  const { id, title, images, price, quantity, description } = product;
+
+  const handleDelete = async () => {
+    if (window.confirm("¿Estás seguro de eliminar el producto?")) {
+      await deleteProduct(id);
+    }
+  };
 
   return (
-    <Card key={id} className="py-4 px-7 justify-center flex flex-col">
-      <div className="mx-auto">
-        <Typography variant="h5" component="h2" className="flex justify-center items-center text-2xl font-bold">
-          {title}
-        </Typography>
-
-        <img
-          src={image}
-          className="object-contain w-64 h-64 mx-auto"
-          alt="Product"
-        />
-
-        <Typography variant="body1" className="flex justify-center items-center py-4 overflow-hidden">
-          $ {price}
-        </Typography>
-
-        <Typography variant="body1" className="flex justify-center items-center py-4 overflow-hidden"> Unidades: {quantity ? quantity : 0} 
-          
-        </Typography>
-      </div>
-      <div className="flex justify-center items-center gap-2">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            navigate("/products/edit/" + id);
-          }}
-          startIcon={<EditIcon />}
-        >
-          Editar
-        </Button>
-        
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={async () => {
-            if (window.confirm("Are you sure you want to delete the product?")) {
-              await deleteProduct(id);
-            }
-          }}
-          startIcon={<DeleteIcon />}
-        >
-          Eliminar
-        </Button>
-      </div>
-    </Card>
+    <Grid item xs={12} sm={12} md={12} lg={12}>
+      <Card>
+        <CardActionArea onClick={() => navigate("/product/" + id)}> 
+          <CardMedia
+            component="img"
+            alt={title}
+            image={images[0]}
+            title={title}
+            sx={{ height: '140px', objectFit: 'cover' }} // Fixed height for media
+          />
+          <CardContent>
+            <Typography variant="h5" component="div" textAlign="center">
+              {title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Unidades: {quantity}
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              $ {price}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions style={{ justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate(`/products/edit/${id}`)}
+            startIcon={<EditIcon />}
+          >
+            Editar
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleDelete}
+            startIcon={<DeleteIcon />}
+          >
+            Eliminar
+          </Button>
+        </CardActions>
+      </Card>
+    </Grid>
   );
 }
 

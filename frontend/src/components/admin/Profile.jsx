@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { Container, Card, Button, TextField, Grid } from "@material-ui/core";
+import { Container, Grid, Card, TextField, Button, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
 const Profile = () => {
   const { user, updateProfile, getEnabledPayments, updateEnabledPayments } =
@@ -70,11 +70,11 @@ const Profile = () => {
 
   return (
     <Container>
-      <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-        <Grid item xs={12} md={8} lg={6}>
-          <Card variant="outlined" style={{ padding: '20px' }}>
-            <h2 className="text-2xl font-semibold mb-4">My Profile</h2>
-            <div className="space-y-4">
+      <Grid container justifyContent="center" alignItems="flex-start">
+        <Grid item xs={12} md={12} lg={12}>
+          <Card variant="outlined" sx={{ p: 4 }}>
+            <Typography variant="h3" gutterBottom sx={{ marginTop:5, textAlign: 'center' }}>{userData.user.name}</Typography>
+            <Box sx={{ display: 'grid', gap: '1rem' }}>
               <TextField
                 label="Name"
                 name="name"
@@ -119,50 +119,61 @@ const Profile = () => {
                 )}
               </div>
               <div>
-                <h3>Payment Options:</h3>
-                <ul>
-                  <li>
-                    <span>MercadoPago:</span>{" "}
-                    <span>{payments?.mercadopago ? "Activado" : "Desactivado"}</span>
-                    <Button
-                      onClick={() => handlePaymentToggle("mercadopago")}
-                      variant="contained"
-                      color={payments?.mercadopago ? "secondary" : "primary"}
-                    >
-                      {payments?.mercadopago
-                        ? "Desactivar MercadoPago"
-                        : "Activar MercadoPago"}
-                    </Button>
-                  </li>
-                  <li>
-                    <span>Paypal:</span>{" "}
-                    <span>{payments?.paypal ? "Activado" : "Desactivado"}</span>
-                    <Button
-                      onClick={() => handlePaymentToggle("paypal")}
-                      variant="contained"
-                      color={payments?.paypal ? "secondary" : "primary"}
-                    >
-                      {payments?.mercadopago
-                        ? "Desactivar Paypal"
-                        : "Activar Paypal"}
-                    </Button>
-                  </li>
-                  <li>
-                    <span>Stripe:</span>{" "}
-                    <span>{payments?.stripe ? "Activado" : "Desactivado"}</span>
-                    <Button
-                      onClick={() => handlePaymentToggle("stripe")}
-                      variant="contained"
-                      color={payments?.stripe ? "secondary" : "primary"}
-                    >
-                      {payments?.stripe
-                        ? "Desactivar Stripe"
-                        : "Activar Stripe"}
-                    </Button>
-                  </li>
-                </ul>
+                <Typography variant="h5" gutterBottom sx={{ marginTop:5, textAlign: 'center' }}>Medios de Pago</Typography>
+                <TableContainer component={Box} sx={{ maxWidth: 1000 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Medio de Pago</TableCell>
+                        <TableCell>Estado</TableCell>
+                        <TableCell>Accion</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>MercadoPago</TableCell>
+                        <TableCell>{payments?.mercadopago ? "Activado" : "Desactivado"}</TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() => handlePaymentToggle("mercadopago")}
+                            variant="contained"
+                            color={payments?.mercadopago ? "secondary" : "primary"}
+                          >
+                            {payments?.mercadopago ? "Desactivar" : "Activar"} 
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Paypal</TableCell>
+                        <TableCell>{payments?.paypal ? "Activado" : "Desactivado"}</TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() => handlePaymentToggle("paypal")}
+                            variant="contained"
+                            color={payments?.paypal ? "secondary" : "primary"}
+                          >
+                            {payments?.paypal ? "Desactivar" : "Activar"}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Stripe</TableCell>
+                        <TableCell>{payments?.stripe ? "Activado" : "Desactivado"}</TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() => handlePaymentToggle("stripe")}
+                            variant="contained"
+                            color={payments?.stripe ? "secondary" : "primary"}
+                          >
+                            {payments?.stripe ? "Desactivar" : "Activar"}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </div>
-            </div>
+            </Box>
           </Card>
         </Grid>
       </Grid>

@@ -1,7 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProducts } from "../../context/ProductsContext";
-import { Container, Card, TextField, Button } from "@material-ui/core";
+import {
+  Container,
+  Card,
+  CircularProgress,
+  TextField,
+  Button,
+  IconButton,
+  CardMedia,
+  Typography,
+  Box,
+  Grid,
+} from "@mui/material";
+
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 function ProductForm() {
   const {
@@ -13,19 +26,22 @@ function ProductForm() {
   } = useProducts();
   const navigate = useNavigate();
   const params = useParams();
-  const [fileLink, setFileLink] = useState("");
+  const [fileLinks, setFileLinks] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
     quantity: "",
     description: "",
+    images: [],
   });
-
+  const [editMode, setEditMode] = useState(false);
   const title = params.id ? "Editar Producto" : "Agregar Producto";
   const button = params.id ? "Actualizar" : "Agregar Producto";
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (params.id) {
+      setEditMode(true);
       getProductById(params.id)
         .then((product) => {
           setFormData({
@@ -33,11 +49,21 @@ function ProductForm() {
             price: product.price,
             quantity: product.quantity,
             description: product.description,
+            images: product.images,
           });
         })
         .catch((error) => {
           console.error(error.message);
         });
+    } else {
+      setEditMode(false);
+      setFormData({
+        title: "",
+        price: "",
+        quantity: "",
+        description: "",
+        images: [],
+      });
     }
   }, [getProductById, params.id]);
 
@@ -47,10 +73,35 @@ function ProductForm() {
       return;
     }
 
-    if (!params.id) {
+    if (!editMode && (!formData.images || formData.images.length === 0)) {
+      alert(
+        "Por favor, sube una imagen al menos antes de enviar el formulario."
+      );
+      return;
+    } else {
+      try {
+        handleImagesUpload()
+          .then(() => {
+            console.log("OK");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    if (!editMode) {
       const res = await createProduct(formData);
-      if(res) {
-        console.log(res);
+      if (res) {
+        setFormData({
+          title: "",
+          price: "",
+          quantity: "",
+          description: "",
+          images: [],
+        });
       }
     } else {
       const product = await updateProduct(params.id, formData);
@@ -64,86 +115,207 @@ function ProductForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImageSelect = async (e) => {
+  const handleImagesInput = async (e) => {
     try {
-      if (e.target.files && e.target.files.length > 0) {
-        const file = e.target.files[0];
-        const link = await fileUpload(file);
-        setFileLink(link);
-        setFormData({ ...formData, image: link });
+      if (e.target.files && e.target.files.length >  0) {
+        // Check if all files are images and under the maximum size
+        const imageFiles = Array.from(e.target.files).filter((file) => {
+          const isImageType = file.type.startsWith('image/');
+          const isBelowMaxSize = file.size <= 99999999999; // Define MAX_FILE_SIZE as per your requirement
+          return isImageType && isBelowMaxSize;
+        });
+  
+        if (imageFiles.length !== e.target.files.length) {
+          alert('Some files are not supported or exceed the maximum file size.');
+        }
+        const tempUrls = imageFiles.map((file) => URL.createObjectURL(file));
+  
+        setFormData({ ...formData, images: tempUrls });
       }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+ 
+  const handleImagesUpload = async () => {
+    try {
+      if (formData?.images?.length > 0) {
+        const uploadedFileLinks = [];
+
+        // Show loading indicator
+        setLoading(true);
+
+        for (let i = 0; i < formData.images.length; i++) {
+          const file = formData.images[i];
+          try {
+            const link = await fileUpload(file);
+            uploadedFileLinks.push(link);
+          } catch (uploadError) {
+            // Handle individual image upload errors
+            console.error(`Failed to upload image ${i}:`, uploadError);
+            // Inform the user about the failure
+            alert(`Failed to upload image ${i}. Please try again.`);
+          }
+        }
+
+        // Update the state with the new links
+        setFileLinks(uploadedFileLinks);
+
+        // Update form data with the new image links
+        const newFormData = { ...formData, images: uploadedFileLinks };
+        setFormData(newFormData);
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred during image upload:", error);
+      // Inform the user about the failure
+      alert(
+        "An unexpected error occurred during image upload. Please try again."
+      );
+    } finally {
+      // Hide loading indicator
+      setLoading(false);
+    }
+  };
+
+  const handleImageDelete = (imageIndex) => {
+    try {
+      const updatedImages = formData.images.filter(
+        (_, index) => index !== imageIndex
+      );
+      setFormData({ ...formData, images: updatedImages });
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <Container className="relative h-[80vh] justify-center items-center cont">
-      <Card className="px-4">
-        {productErrors.map((error, index) => (
-          <p key={index} className="bg-red-500 text-center p-2">
-            {error}
-          </p>
-        ))}
-        <div className="flex justify-center items-center">
-          <h1 className="text-4xl font-bold my-10">{title}</h1>
-        </div>
-        <form onSubmit={handleSubmit} className="my-4 relative">
-          <TextField
-            label="Producto"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Precio"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Unidades"
-            name="quantity"
-            value={formData.quantity}
-            onChange={handleInputChange}
-            fullWidth
-            required
-          />
-          <TextField
-            label="Descripcion"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            fullWidth
-            multiline
-            minRows={3}
-          />
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageSelect}
-            style={{ marginBottom: "10px" }}
-          />
-          {fileLink && (
-            <img src={fileLink} alt="Product" width={400} height={400} />
-          )}
-          <div className="flex justify-center items-center">
-            <Button
-              variant="contained"
-              color="secondary"
-              className="w-96 text-center"
-              type="submit"
-            >
-              {button}
-            </Button>
-          </div>
+    <Container>
+      <Card sx={{ p: 4 }}>
+        <Box sx={{ mb: 2 }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: "bold", textAlign: "center" }}
+          >
+            {title}
+          </Typography>
+        </Box>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="Producto"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                fullWidth
+                required
+                variant="outlined"
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Precio"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
+                fullWidth
+                required
+                variant="outlined"
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Unidades"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleInputChange}
+                fullWidth
+                required
+                variant="outlined"
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Descripcion"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                fullWidth
+                multiline
+                minRows={3}
+                variant="outlined"
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImagesInput}
+                hidden
+                id="upload-button"
+              />
+              <label htmlFor="upload-button">
+                <Button variant="outlined" component="span">
+                  Seleccionar imagenes
+                </Button>
+              </label>
+            </Grid>
+            
+            {formData?.images?.length > 0 && ( 
+              <Grid container spacing={2}>
+                {formData?.images.map((img, index) => (
+                  <Grid item xs={1.5} mt={1.5} key={index}>
+                    <CardMedia
+                      component="img"
+                      src={img}
+                      alt={`Product ${index}`}
+                      sx={{
+                        height: 150,
+                        maxHeight: "150px",
+                        width: 150,
+                        maxWidth: "150px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <IconButton
+                      aria-label="delete image"
+                      onClick={() => handleImageDelete(index)}
+                    >
+                      <HighlightOffIcon />
+                    </IconButton>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                type="submit"
+              >
+                {button}
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </Card>
+      {loading && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="200px"
+        >
+          <CircularProgress />
+        </Box>
+      )}
     </Container>
   );
 }

@@ -4,10 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchStock } from "../../redux/middlewares/stockThunk";
 
 import ProductsAdminCard from "./ui/ProductsAdminCard";
+import { Container, Grid, Typography } from "@material-ui/core";
 
 function Products() {
-
-  const { stock, loading, error } = useSelector((state) => state.stock);  
+  const { stock, loading, error } = useSelector((state) => state.stock);
 
   const dispatch = useDispatch();
 
@@ -15,20 +15,32 @@ function Products() {
     dispatch(fetchStock());
   }, [dispatch]);
 
-  if(stock.length === 0) {
+  if (stock.length === 0) {
     return (
-      <div className="flex justify-center items-center h-[calc(100vh-10rem)]">
-        <p className="text-2xl font-bold text-slate-300">
-          No hay productos cargados aun!
-        </p>
-      </div>
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        style={{ minHeight: "calc(100vh - 10rem)" }}
+      >
+        <Typography variant="h6" color="textSecondary">
+          No hay productos cargados aún!
+        </Typography>
+      </Grid>
     );
   }
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
-      {stock && stock.map((product) => <ProductsAdminCard product={product} key={product.id} />)}
-    </div>
+    <Container >
+      <Grid container spacing={2}>
+        {stock &&
+          stock.map((product) => (
+            <Grid item key={product.id} xs={12} sm={6} md={4} lg={4}>
+              <ProductsAdminCard product={product} />
+            </Grid>
+          ))}
+      </Grid>
+    </Container>
   );
 }
 
