@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from "react";
 import {
-  getProductsRequest,
   getProductByIdRequest,
   createProductRequest,
   updateProductRequest,
@@ -26,15 +25,6 @@ export const useProducts = () => {
 export const ProductsProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [errors, setErrors] = useState([]);
-
-  const getProducts = async () => {
-    try {
-      const res = await getProductsRequest();
-      setProducts(res.data);
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
 
   const getProductById = async (id) => {
     try {
@@ -86,6 +76,9 @@ export const ProductsProvider = ({ children }) => {
     const content_type = file.type;
     const key = `products/${file.name}`;
 
+    console.log("key:", key);
+    console.log("content_type:", file.type);
+
     const response = await getSignedUrlRequest({ key, content_type });
     
     await uploadFileToSignedUrlRequest(
@@ -103,7 +96,6 @@ export const ProductsProvider = ({ children }) => {
     <ProductsContext.Provider
       value={{
         products,
-        getProducts,
         getProductById,
         createProduct,
         updateProduct,

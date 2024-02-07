@@ -24,7 +24,7 @@ import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
 
 function CartSummary({ item }) {
   const dispatch = useDispatch();
-  const { id, title, quantity, image, price } = item;
+  const { id, title, quantity, images, price } = item;
 
   const { stock, loading, error } = useSelector((state) => state.stock);
 
@@ -100,7 +100,7 @@ function CartSummary({ item }) {
           height: { xs: 70, md: 70 },
           objectFit: "contain",
         }}
-        image={image}
+        image={images[0]}
         alt={title}
       />
 

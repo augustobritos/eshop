@@ -33,7 +33,7 @@ function ProductsAdminCard({ product }) {
             alt={title}
             image={images[0]}
             title={title}
-            sx={{ height: '140px', objectFit: 'cover' }} // Fixed height for media
+            sx={{ height: '140px', objectFit: 'cover' }}
           />
           <CardContent>
             <Typography variant="h5" component="div" textAlign="center">

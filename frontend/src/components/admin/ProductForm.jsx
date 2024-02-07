@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import { useProducts } from "../../context/ProductsContext";
+
 import {
   Container,
   Card,
-  CircularProgress,
   TextField,
   Button,
   IconButton,
@@ -13,8 +14,8 @@ import {
   Box,
   Grid,
 } from "@mui/material";
-
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import Loading from "../ui/Loading";
 
 function ProductForm() {
   const {
@@ -78,18 +79,6 @@ function ProductForm() {
         "Por favor, sube una imagen al menos antes de enviar el formulario."
       );
       return;
-    } else {
-      try {
-        handleImagesUpload()
-          .then(() => {
-            console.log("OK");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (error) {
-        console.error(error);
-      }
     }
 
     if (!editMode) {
@@ -115,65 +104,42 @@ function ProductForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImagesInput = async (e) => {
+  const handleImagesUpload = async (e) => {
+    const MAX_SIZE = 100000; // 0.1 MB
     try {
-      if (e.target.files && e.target.files.length >  0) {
-        // Check if all files are images and under the maximum size
+      if (e.target.files && e.target.files.length > 0) {
         const imageFiles = Array.from(e.target.files).filter((file) => {
-          const isImageType = file.type.startsWith('image/');
-          const isBelowMaxSize = file.size <= 99999999999; // Define MAX_FILE_SIZE as per your requirement
+          const isImageType = file.type.startsWith("image/");
+          const isBelowMaxSize = file.size <= MAX_SIZE;
           return isImageType && isBelowMaxSize;
         });
-  
+
         if (imageFiles.length !== e.target.files.length) {
-          alert('Some files are not supported or exceed the maximum file size.');
+          alert(
+            "Some files are not supported or exceed the maximum file size."
+          );
         }
-        const tempUrls = imageFiles.map((file) => URL.createObjectURL(file));
-  
-        setFormData({ ...formData, images: tempUrls });
+
+        setLoading(true);
+        const uploadedFileLinks = await Promise.all(
+          imageFiles.map(async (file) => {
+            try {
+              const link = await fileUpload(file);
+              return link;
+            } catch (uploadError) {
+              console.error(`Failed to upload image:`, uploadError);
+              throw new Error(`Failed to upload image. Please try again.`);
+            }
+          })
+        );
+
+        setFileLinks(uploadedFileLinks);
+        const newFormData = { ...formData, images: uploadedFileLinks };
+        setFormData(newFormData);
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-  
- 
-  const handleImagesUpload = async () => {
-    try {
-      if (formData?.images?.length > 0) {
-        const uploadedFileLinks = [];
-
-        // Show loading indicator
-        setLoading(true);
-
-        for (let i = 0; i < formData.images.length; i++) {
-          const file = formData.images[i];
-          try {
-            const link = await fileUpload(file);
-            uploadedFileLinks.push(link);
-          } catch (uploadError) {
-            // Handle individual image upload errors
-            console.error(`Failed to upload image ${i}:`, uploadError);
-            // Inform the user about the failure
-            alert(`Failed to upload image ${i}. Please try again.`);
-          }
-        }
-
-        // Update the state with the new links
-        setFileLinks(uploadedFileLinks);
-
-        // Update form data with the new image links
-        const newFormData = { ...formData, images: uploadedFileLinks };
-        setFormData(newFormData);
-      }
-    } catch (error) {
-      console.error("An unexpected error occurred during image upload:", error);
-      // Inform the user about the failure
-      alert(
-        "An unexpected error occurred during image upload. Please try again."
-      );
-    } finally {
-      // Hide loading indicator
       setLoading(false);
     }
   };
@@ -256,7 +222,7 @@ function ProductForm() {
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={handleImagesInput}
+                onChange={handleImagesUpload}
                 hidden
                 id="upload-button"
               />
@@ -266,8 +232,8 @@ function ProductForm() {
                 </Button>
               </label>
             </Grid>
-            
-            {formData?.images?.length > 0 && ( 
+
+            {formData?.images?.length > 0 && (
               <Grid container spacing={2}>
                 {formData?.images.map((img, index) => (
                   <Grid item xs={1.5} mt={1.5} key={index}>
@@ -306,16 +272,7 @@ function ProductForm() {
           </Grid>
         </form>
       </Card>
-      {loading && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="200px"
-        >
-          <CircularProgress />
-        </Box>
-      )}
+      {loading && <Loading />}
     </Container>
   );
 }
