@@ -17,6 +17,7 @@ import SignIn from "./components/admin/SignIn";
 import Profile from "./components/admin/Profile";
 import Products from "./components/pages/Products";
 import ProductView from "./components/ui/products/ProductView";
+import ProductList from "./components/pages/ProductList";
 import Cart from "./components/pages/cart/Cart";
 import Checkout from "./components/pages/cart/Checkout";
 import SuccessPayment from "./components/pages/cart/SuccessPayment";
@@ -67,7 +68,7 @@ function App() {
               {/* Public - Protected Routes */}
               <Route
                 element={
-                  <ProtectedRoute isAllowed={!isAuth} redirectTo="/signin" />
+                  <ProtectedRoute isAllowed={!isAuth} redirectTo="/" />
                 }
               >
                 <Route path="/signup" element={<SignUp />} />
@@ -110,6 +111,7 @@ function App() {
                 }
               >
                 <Route path="/products" element={<Products />} />
+                <Route path="/listing" element={<ProductList />} />
                 <Route path="/product/:id" element={<ProductView />} />
                 <Route path="/cart" element={<Cart theme={theme} />} />
                 <Route path="/checkout" element={<Checkout />} />

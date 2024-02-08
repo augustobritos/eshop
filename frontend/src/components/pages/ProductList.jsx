@@ -1,44 +1,57 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchStock } from "../../redux/middlewares/stockThunk";
 
 import ProductsCard from "../ui/products/ProductsCard";
 import { Container, Typography, Grid } from "@material-ui/core";
+import { CircularProgress, Box } from "@mui/material";
 
 import Error from "../ui/Error";
-import Loading from "../ui/Loading";
 
-function Products() {
+function ProductList() {
+  const location = useLocation();
+  const matchingItems = location.state ? location.state.matchingItems : [];
   const { stock, loading, error } = useSelector((state) => state.stock);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(location.state); // it works
     dispatch(fetchStock());
-  }, [dispatch]);
+  }, [dispatch, location]);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="200px"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
     return <Error errorMessage={error} />;
   }
 
-  if (stock.length === 0) {
+  if (matchingItems.length === 0) {
     return (
-      <Container style={{ marginTop: "2rem" }}>
-        <Typography variant="h4" color="textSecondary" align="center">
-          No hay productos cargados aun!
+      <Box sx={{ padding: 'auto', margin: 'auto', mt:50 }} >
+        <Typography variant="h4" color="secondary" align="center">
+          No hay coincidencias :(
         </Typography>
-      </Container>
+      </Box>
     );
   }
 
   return (
     <Container style={{ marginTop: "2rem", marginBottom: "2rem" }}>
       <Grid container spacing={4}>
-        {stock &&
-          stock.map((product) => (
+        {matchingItems &&
+          matchingItems.map((product) => (
             <Grid item xs={12} sm={6} md={4} key={product.id}>
               <ProductsCard product={product} stock={stock} />
             </Grid>
@@ -48,4 +61,4 @@ function Products() {
   );
 }
 
-export default Products;
+export default ProductList;

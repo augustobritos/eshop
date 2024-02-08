@@ -5,12 +5,7 @@ import {
 
 const Loading = () => {
   return (
-    <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="200px"
-        >
+    <Box sx={{ padding: 'auto', margin: 'auto', mt: 50 }} >
           <CircularProgress />
         </Box>
   )

@@ -153,6 +153,16 @@ function ProductView() {
             >
               {product ? product.description : ""}
             </Typography>
+            {product?.quantity < 1 && (
+            <Typography
+              variant="body2"
+              color="error"
+              align="center"
+              sx={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: '100%' }}
+            >
+              No disponible
+            </Typography>
+          )}
             <Box
               sx={{
                 display: "flex",
@@ -165,8 +175,9 @@ function ProductView() {
                 variant="contained"
                 color="secondary"
                 onClick={handleAddToCart}
+                disabled={product?.quantity < 1}
               >
-                <AddShoppingCartIcon /> Añadir a la cesta
+              Añadir al carro <AddShoppingCartIcon /> 
               </Button>
             </Box>
           </>
