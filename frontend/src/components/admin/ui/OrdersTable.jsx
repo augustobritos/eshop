@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 import {
+  Box,
   Button,
   Dialog,
   DialogTitle,
@@ -16,9 +17,11 @@ import {
   Tooltip,
   ThemeProvider,
   TablePagination,
+  Typography,
 } from "@material-ui/core";
 import { DeleteForever } from "@mui/icons-material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 const OrdersTable = ({
   theme,
@@ -27,27 +30,24 @@ const OrdersTable = ({
   handleConfirmDelete,
 }) => {
   const columns = [
-    { id: "id", name: "Orden ID" },
+    { id: "id", name: "ID" },
     { id: "customer", name: "Cliente" },
     { id: "email", name: "Email" },
-    { id: "phone", name: "Phone" },
-    { id: "address", name: "Address" },
+    { id: "phone", name: "Telefono" },
+    { id: "address", name: "Direccion" },
     { id: "products", name: "Productos" },
+    { id: "quantity", name: "Cantidad" },
     { id: "total", name: "Total" },
-    { id: "status", name: "Estado de la orden" },
+    { id: "status", name: "Estado" },
     { id: "timestamp", name: "Fecha" },
     { id: "actions", name: "Acciones" },
   ];
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const startIndex = page * rowsPerPage;
-  const endIndex = Math.min(startIndex + rowsPerPage, orders.length);
-  const ordersToShow = orders.slice(startIndex, endIndex);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [pendingFilter, setPendingFilter] = useState(false);
-  const [filteredOrders, setFilteredOrders] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -58,24 +58,48 @@ const OrdersTable = ({
     setPage(0);
   };
 
-  const handleStatusChange = (orderId) => {
-    setSelectedOrderId(orderId);
+  const handleStatusChange = (order) => {
+    setSelectedOrder(order);
     setStatusDialogOpen(true);
   };
 
-  const handleDeleteOrder = (orderId) => {
-    setSelectedOrderId(orderId);
+  const handleDeleteOrder = (order) => {
+    setSelectedOrder(order);
     setDeleteDialogOpen(true);
+  };
+
+  const filteredAndPagedOrders = useMemo(() => {
+    let result = orders;
+
+    if (pendingFilter) {
+      result = result.filter((order) => order.status === "Pendiente");
+    }
+
+    // Calculate the start and end indices for the current page
+    const startIndex = page * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+
+    // Return the sliced array for the current page
+    return result.slice(startIndex, endIndex);
+  }, [orders, page, rowsPerPage, pendingFilter]);
+
+  const handleTogglePendingFilter = () => {
+    setPendingFilter(!pendingFilter);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => console.log("Copied to clipboard:", text))
+      .catch((error) => console.error("Failed to copy to clipboard:", error));
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Button onClick={() => setPendingFilter(!pendingFilter)} color="primary">
-        {pendingFilter
-          ? "Todas las órdenes"
-          : "Solo pendientes"}
+      <Button onClick={() => handleTogglePendingFilter()} color="secondary">
+        {pendingFilter ? "Todas" : "Pendientes"}
       </Button>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ maxWidth: 2000 }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
@@ -85,30 +109,61 @@ const OrdersTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {ordersToShow.map((order, i) => (
+            {filteredAndPagedOrders.map((order, i) => (
               <TableRow key={i}>
-                <TableCell>{order.id}</TableCell>
+                <TableCell>
+                  {order.id.substring(15, 20)}
+                  <Tooltip title="Copy ID">
+                    <IconButton
+                      onClick={() => copyToClipboard(order.id)}
+                      color="secondary"
+                    >
+                      <ContentCopyIcon />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+
                 <TableCell>{order.customer.name}</TableCell>
                 <TableCell>{order.customer.email}</TableCell>
                 <TableCell>{order.customer.phone}</TableCell>
                 <TableCell>{order.customer.address}</TableCell>
-                <TableCell>
+                <TableCell align="left">
+                  <div style={{ width: 120, maxWidth: "150px" }}>
+                    {order.cart.map((product) => (
+                      <Typography key={product.id} variant="body2">
+                        {product.title}
+                      </Typography>
+                    ))}
+                  </div>
+                </TableCell>
+                <TableCell align="center">
                   {order.cart.map((product) => (
-                    <div key={product.id}>{product.title}</div>
+                    <Typography key={product.id} variant="body2">
+                      {product.quantity}
+                    </Typography>
                   ))}
                 </TableCell>
-                <TableCell>{order.total}</TableCell>
+                <TableCell>${order.total}</TableCell>
                 <TableCell>{order.status}</TableCell>
-                <TableCell>{"No timestamp available"}</TableCell>
+                <TableCell>{order.timestamp}</TableCell>
 
                 <TableCell>
-                  <Tooltip title="Pagado">
-                    <IconButton onClick={() => handleStatusChange(order.id)}>
+                  <Tooltip title="Finalizar">
+                    <IconButton
+                      onClick={() => handleStatusChange(order)}
+                      disabled={order.status === "Pagado"}
+                      style={
+                        order.status === "Pendiente" ? { color: "#00FF00" } : {}
+                      }
+                    >
                       <DoneAllIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Eliminar">
-                    <IconButton onClick={() => handleDeleteOrder(order.id)}>
+                    <IconButton
+                      onClick={() => handleDeleteOrder(order.id)}
+                      style={{ color: "red" }}
+                    >
                       <DeleteForever />
                     </IconButton>
                   </Tooltip>
@@ -138,7 +193,7 @@ const OrdersTable = ({
           </Button>
           <Button
             onClick={() => {
-              handleUpdateStatus(selectedOrderId);
+              handleUpdateStatus(selectedOrder);
               setStatusDialogOpen(false);
             }}
             color="primary"
@@ -158,7 +213,7 @@ const OrdersTable = ({
           </Button>
           <Button
             onClick={() => {
-              handleConfirmDelete(selectedOrderId);
+              handleConfirmDelete(selectedOrder);
               setDeleteDialogOpen(false);
             }}
             color="primary"

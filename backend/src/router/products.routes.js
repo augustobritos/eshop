@@ -5,6 +5,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  updateStock
 } from "../controllers/products.controller.js";
 import isAuth from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
@@ -22,5 +23,7 @@ router.post("/products", isAuth, validateSchema(createProductSchema), createProd
 router.put("/products/:id", isAuth, validateSchema(updateProductSchema), updateProduct);
 
 router.delete("/product/:id", isAuth, deleteProduct);
+
+router.put("/products/update/stock", updateStock);
 
 export default router;

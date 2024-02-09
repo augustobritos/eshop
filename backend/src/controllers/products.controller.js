@@ -100,10 +100,54 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const updateStock = async (req, res, next) => {
+  console.log("Updating stock...");
+  try {
+    const { cart } = req.body;
+    cart.map((i) => console.log("item: ", i.title));
+
+    const batch = firestore.batch(); 
+
+    // Iterate through each product in the cart
+    for (const product of cart) {
+      const productId = product.id;
+      const productRef = firestore.collection("products").doc(productId);
+
+      // Get the current quantity of the product from the database
+      const doc = await productRef.get();
+
+      // Check if the document exists before accessing its data
+      if (!doc.exists) {
+        console.error(`Document for product ID ${productId} not found.`);
+        continue; // Skip this product and move to the next one
+      }
+
+      const currentQuantity = doc.data().quantity;
+            
+      // Calculate the new quantity after subtracting from the cart
+      const newQuantity = currentQuantity - product.quantity; 
+
+      // Update the stock of the product by subtracting from the quantity in the database
+      batch.update(productRef, { quantity: newQuantity });
+    }
+
+    // Commit the batch operation
+    await batch.commit();
+
+    res.status(200).send("Stock updated successfully");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+}
+
+
+
 export {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  updateStock
 };

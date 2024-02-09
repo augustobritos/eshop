@@ -50,7 +50,7 @@ function ProductsAdminCard({ product }) {
         <CardActions style={{ justifyContent: 'center' }}>
           <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={() => navigate(`/products/edit/${id}`)}
             startIcon={<EditIcon />}
           >
@@ -58,7 +58,7 @@ function ProductsAdminCard({ product }) {
           </Button>
           <Button
             variant="contained"
-            color="secondary"
+            color="error"
             onClick={handleDelete}
             startIcon={<DeleteIcon />}
           >

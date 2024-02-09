@@ -1,34 +1,51 @@
 import { useState, useEffect } from "react";
+
 import {
   getOrdersRequest,
   updateStatusRequest,
   deleteOrderRequest,
 } from "../../api/orders.api";
+import { updateStockRequest } from "../../api/products.api";
+
 import OrdersTable from "./ui/OrdersTable";
-import { CircularProgress } from "@material-ui/core";
+import Error from "../ui/Error";
+import Loading from "../ui/Loading";
+import Warning from "../ui/Warning";
 
 const OrdersManagement = ({ theme }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [warning, setWarning] = useState(null);
 
-  const handleUpdateStatus = async (orderId) => {
+  const handleUpdateStatus = async (orderToUpdate) => {
     try {
-      await updateStatusRequest(orderId);
-      const updatedOrders = orders.map((order) =>
-        order.id === orderId ? { ...order, status: "Pagado" } : order
-      );
-      setOrders(updatedOrders);
+      const updateStatusResponse = await updateStatusRequest(orderToUpdate.id);
+      const updateStockResponse = await updateStockRequest(orderToUpdate);
+      if (updateStatusResponse) {
+        const updatedOrders = orders.map((order) =>
+          order.id === orderToUpdate.id ? { ...order, status: "Pagado" } : order
+        );
+        setOrders(updatedOrders);
+      } else {
+        setWarning("El estado no pudo ser actualizado");
+      }
+      if (!updateStockResponse) {
+        setWarning("El stock no pudo ser actualizado.");
+      }
     } catch (error) {
       console.error(error);
+      setError(error);
     }
   };
 
   const handleConfirmDelete = async (orderId) => {
     try {
-      await deleteOrderRequest(orderId);
-      const updatedOrders = orders.filter((order) => order.id !== orderId);
-      setOrders(updatedOrders);
+      const res = await deleteOrderRequest(orderId);
+      if (res) {
+        const updatedOrders = orders.filter((order) => order.id !== orderId);
+        setOrders(updatedOrders);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -40,12 +57,10 @@ const OrdersManagement = ({ theme }) => {
         .then(({ data }) => {
           setOrders(data.orders);
           console.log(data.orders);
-          if (data.orders && data.orders.timestamp) {
-            const { _seconds, _nanoseconds } = data.orders.timestamp;
-            const milliseconds =
-              _seconds * 1000 + Math.round(_nanoseconds / 1000000);
-            const date = new Date(milliseconds);
-            console.log(date.toString());
+          if (data.orders) {
+            data.orders.map((o) => {
+              console.log(o.timestamp);
+            })
           } else {
             console.error(
               "Timestamp data is undefined or not in the expected format"
@@ -60,24 +75,27 @@ const OrdersManagement = ({ theme }) => {
   }, [loading, error]);
 
   if (loading) {
-    return <CircularProgress style={{ margin: "auto" }} />;
+    return <Loading />;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <Error />;
   }
 
   if (!orders || orders.length === 0) {
-    return <div>No orders yet.</div>;
+    return <div>Aun no hay ordenes cargadas.</div>;
   }
 
   return (
-    <OrdersTable
-      theme={theme}
-      orders={orders}
-      handleUpdateStatus={handleUpdateStatus}
-      handleConfirmDelete={handleConfirmDelete}
-    />
+    <>
+      {warning && <Warning message={warning} />}
+      <OrdersTable
+        theme={theme}
+        orders={orders}
+        handleUpdateStatus={handleUpdateStatus}
+        handleConfirmDelete={handleConfirmDelete}
+      />
+    </>
   );
 };
 

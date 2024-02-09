@@ -114,7 +114,7 @@ function Checkout({ items, total, customerData, onClick }) {
       customer: customerData,
       cart: items,
       total: total,
-      status: "pending",
+      status: "Pendiente",
     };
 
     try {
