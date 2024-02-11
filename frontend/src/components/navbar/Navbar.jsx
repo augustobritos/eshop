@@ -122,8 +122,7 @@ function Navbar({ darkMode, toggleDarkMode }) {
                     color="inherit"
                     sx={{ mx: 1 }}
                   >
-                    <Avatar alt={user.name} src={user.gravatar} />
-                    {user.name}
+                    Perfil
                   </Button>
                   <Button color="inherit" onClick={signOut}>
                     Salir{""} <ExitToAppIcon />

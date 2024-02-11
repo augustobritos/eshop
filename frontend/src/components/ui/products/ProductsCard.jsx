@@ -51,9 +51,11 @@ function ProductsCard({ product }) {
   return (
     <Card
       sx={{
-        maxWidth: 400,
+        maxWidth: 300,
         width: "100%",
         minHeight: 400,
+        maxHeight: 400,
+        height: 400,
         position: "relative",
       }}
     >
@@ -63,7 +65,7 @@ function ProductsCard({ product }) {
           alt="Product"
           image={images[0]}
           title={title}
-          sx={{ height: "250px", objectFit: "cover" }}
+          sx={{ height: "200px", objectFit: "cover" }}
         />
         <CardContent>
           <Typography

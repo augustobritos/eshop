@@ -10,3 +10,12 @@ export const updateProductRequest = (id, product) => axios.put(`/products/${id}`
 
 export const deleteProductRequest = (id) => axios.delete(`/product/${id}`);
 
+export const updateStockRequest = async (cart) =>{
+    try {
+        const response = await axios.put("/products/update/stock", cart);
+        return response.data;
+    } catch (error) {
+        console.error("Error Actualizado el Stock:", error);
+    throw error;
+    }
+}

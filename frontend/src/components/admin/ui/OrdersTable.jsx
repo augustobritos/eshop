@@ -26,7 +26,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 const OrdersTable = ({
   theme,
   orders,
-  handleUpdateStatus,
+  handleConfirmOrder,
   handleConfirmDelete,
 }) => {
   const columns = [
@@ -193,7 +193,7 @@ const OrdersTable = ({
           </Button>
           <Button
             onClick={() => {
-              handleUpdateStatus(selectedOrder);
+              handleConfirmOrder(selectedOrder);
               setStatusDialogOpen(false);
             }}
             color="primary"

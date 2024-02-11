@@ -58,17 +58,14 @@ const getOrders = async (req, res, next) => {
 };
 
 const updateOrderStatus = async (req, res, next) => {
-  const { id } = req.params;
-
   try {
+    const { id } = req.params;
     const orderRef = firestore.collection("orders").doc(id);
 
     await orderRef.update({
       status: "Pagado",
     });
-    return res
-      .json({ message: "Estado de orden actualizado exitosamente." })
-      .status(200);
+    return res.status(200).json({ message: "Estado actualizado exitosamente." });
   } catch (error) {
     console.error("Error al actualizar estado de la orden:", error);
     next(error);
@@ -76,7 +73,6 @@ const updateOrderStatus = async (req, res, next) => {
 };
 
 const deleteOrder = async (req, res, next) => {
-  console.log("deleteOrder");
   try {
     const { id } = req.params;
     console.log(id);
@@ -89,7 +85,7 @@ const deleteOrder = async (req, res, next) => {
 
     await orderRef.delete();
 
-    return res.sendStatus(204);
+    return res.status(204);
   } catch (error) {
     console.error("Error al eliminar la orden:", error);
     next(error);

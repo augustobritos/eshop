@@ -21,8 +21,8 @@ function SignIn() {
   });
 
   return (
-    <Container sx={{ height: "calc(100vh - 10rem)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <Card sx={{ p: 4, maxWidth: 400 }}>
+    <Container sx={{ display: "flex", alignItems: "center", justifyContent: "center", mt:5 }}>
+      <Card sx={{ p: 4, maxWidth: 500, width: 500 }}>
         {signInErrors &&
           signInErrors.map((error, index) => (
             <Box key={index} sx={{ bgcolor: "error.main", color: "error.contrastText", p: 2, mb: 2, borderRadius: 1 }}>

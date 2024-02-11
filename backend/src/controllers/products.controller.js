@@ -134,7 +134,7 @@ const updateStock = async (req, res, next) => {
     // Commit the batch operation
     await batch.commit();
 
-    res.status(200).send("Stock updated successfully");
+    res.status(200).json({ message: "Stock actualizado exitosamente." });
   } catch (error) {
     console.error(error);
     next(error);

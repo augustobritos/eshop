@@ -1,4 +1,5 @@
 import { Typography, Button, Card, Box, styled } from "@mui/material";
+import Warning from "./Warning";
 
 const CustomButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(2),
@@ -8,8 +9,10 @@ const CustomButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const Error = () => {
+const Error = ({ error }) => {
   return (
+    <>
+    {error && <Warning message={error}/>}
     <Card
       sx={{
         maxWidth: "md",
@@ -63,6 +66,7 @@ const Error = () => {
        
       </Box>
     </Card>
+    </>
   );
 };
 

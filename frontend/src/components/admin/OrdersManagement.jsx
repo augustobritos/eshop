@@ -8,29 +8,42 @@ import {
 import { updateStockRequest } from "../../api/products.api";
 
 import OrdersTable from "./ui/OrdersTable";
-import Error from "../ui/Error";
 import Loading from "../ui/Loading";
+import Success from "../ui/Success";
 import Warning from "../ui/Warning";
+import Error from "../ui/Error";
+import Empty from "./ui/Empty";
 
 const OrdersManagement = ({ theme }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [successMessages, setSuccessMessages] = useState([]);
+  const [warning, setWarning] = useState([]);
   const [error, setError] = useState(null);
-  const [warning, setWarning] = useState(null);
 
-  const handleUpdateStatus = async (orderToUpdate) => {
+  const handleConfirmOrder = async (orderToUpdate) => {
     try {
       const updateStatusResponse = await updateStatusRequest(orderToUpdate.id);
       const updateStockResponse = await updateStockRequest(orderToUpdate);
+
       if (updateStatusResponse) {
         const updatedOrders = orders.map((order) =>
           order.id === orderToUpdate.id ? { ...order, status: "Pagado" } : order
         );
         setOrders(updatedOrders);
+        setSuccessMessages((prevMessages) => [
+          ...prevMessages,
+          updateStatusResponse.message,
+        ]);
       } else {
         setWarning("El estado no pudo ser actualizado");
       }
-      if (!updateStockResponse) {
+      if (updateStockResponse) {
+        setSuccessMessages((prevMessages) => [
+          ...prevMessages,
+          updateStockResponse.message,
+        ]);
+      } else {
         setWarning("El stock no pudo ser actualizado.");
       }
     } catch (error) {
@@ -41,8 +54,8 @@ const OrdersManagement = ({ theme }) => {
 
   const handleConfirmDelete = async (orderId) => {
     try {
-      const res = await deleteOrderRequest(orderId);
-      if (res) {
+      const response = await deleteOrderRequest(orderId);
+      if (response.status === 204) {
         const updatedOrders = orders.filter((order) => order.id !== orderId);
         setOrders(updatedOrders);
       }
@@ -56,16 +69,6 @@ const OrdersManagement = ({ theme }) => {
       getOrdersRequest()
         .then(({ data }) => {
           setOrders(data.orders);
-          console.log(data.orders);
-          if (data.orders) {
-            data.orders.map((o) => {
-              console.log(o.timestamp);
-            })
-          } else {
-            console.error(
-              "Timestamp data is undefined or not in the expected format"
-            );
-          }
         })
         .catch((error) => {
           setError(error);
@@ -79,20 +82,24 @@ const OrdersManagement = ({ theme }) => {
   }
 
   if (error) {
-    return <Error />;
+    return <Error message={error}/>;
   }
 
   if (!orders || orders.length === 0) {
-    return <div>Aun no hay ordenes cargadas.</div>;
+    return <Empty message="Aun no hay ordenes cargadas."/>;
   }
 
   return (
     <>
-      {warning && <Warning message={warning} />}
+      {successMessages &&
+        successMessages.length > 0 &&
+        successMessages.map((msg, index) => <Success key={index} message={msg}/>)}
+      {warning && warning.length > 0 && <Warning message={warning} />}
+
       <OrdersTable
         theme={theme}
         orders={orders}
-        handleUpdateStatus={handleUpdateStatus}
+        handleConfirmOrder={handleConfirmOrder}
         handleConfirmDelete={handleConfirmDelete}
       />
     </>
