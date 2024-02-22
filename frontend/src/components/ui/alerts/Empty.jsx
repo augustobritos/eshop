@@ -1,22 +1,23 @@
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 function Empty({ message }) {
   return (
-    <Typography
-      variant="h4"
-      color="text.secondary"
-      align="center"
+    <Box
       sx={{
-        maxWidth: 1000,
-        width: 1000,
-        maxHeight: 1000,
-        height: 1000,
-        margin: "auto",
-        mt: 20,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "80vh",
+        mx: "auto",
+        textAlign: "center",
+        p: 2,
       }}
     >
-      {message}
-    </Typography>
+      <Typography variant="h3" color="secondary">
+        {message}
+      </Typography>
+    </Box>
   );
 }
 

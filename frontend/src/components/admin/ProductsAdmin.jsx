@@ -5,6 +5,7 @@ import { fetchStock } from "../../redux/middlewares/stockThunk";
 
 import ProductsAdminCard from "./ui/ProductsAdminCard";
 import { Container, Grid, Typography } from "@material-ui/core";
+import { Empty } from "../ui/alerts/index.js";
 
 function Products() {
   const { stock, loading, error } = useSelector((state) => state.stock);
@@ -15,22 +16,11 @@ function Products() {
   }, [dispatch]);
 
   if (stock.length === 0) {
-    return (
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        style={{ minHeight: "calc(100vh - 10rem)" }}
-      >
-        <Typography variant="h6" color="secondary">
-          No hay productos cargados aún!
-        </Typography>
-      </Grid>
-    );
+    return <Empty message="No hay productos cargados aún!" />;
   }
 
   return (
-    <Container >
+    <Container>
       <Grid container spacing={2}>
         {stock &&
           stock.map((product) => (

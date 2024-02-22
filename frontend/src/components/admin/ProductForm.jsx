@@ -29,13 +29,12 @@ function ProductForm() {
     fileUpload,
     errors: productErrors,
   } = useProducts();
-  const navigate = useNavigate();
   const params = useParams();
-  const [fileLinks, setFileLinks] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     price: "",
     quantity: "",
+    category: "",
     description: "",
     images: [],
   });
@@ -55,6 +54,7 @@ function ProductForm() {
             title: product.title,
             price: product.price,
             quantity: product.quantity,
+            category: product.category,
             description: product.description,
             images: product.images,
           });
@@ -68,6 +68,7 @@ function ProductForm() {
         title: "",
         price: "",
         quantity: "",
+        category: "",
         description: "",
         images: [],
       });
@@ -98,13 +99,14 @@ function ProductForm() {
 
     if (!editMode) {
       const res = await createProduct(formData);
-      console.log(res);
+
       if (res) {
         setSuccessMessages((prevMessages) => [...prevMessages, res.message]);
         setFormData({
           title: "",
           price: "",
           quantity: "",
+          category: "",
           description: "",
           images: [],
         });
@@ -112,7 +114,6 @@ function ProductForm() {
     } else {
       const res = await updateProduct(params.id, formData);
       setSuccessMessages((prevMessages) => [...prevMessages, res.message]);
-      console.log(successMessages);
     }
   };
 
@@ -149,7 +150,6 @@ function ProductForm() {
           })
         );
 
-        setFileLinks(uploadedFileLinks);
         const newFormData = { ...formData, images: uploadedFileLinks };
         setFormData(newFormData);
         setLoading(false);
@@ -232,6 +232,18 @@ function ProductForm() {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                label="Categoria"
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                fullWidth
+                required
+                variant="outlined"
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
                 label="Descripcion"
                 name="description"
                 value={formData.description}
@@ -258,7 +270,6 @@ function ProductForm() {
                 </Button>
               </label>
             </Grid>
-
             {formData?.images?.length > 0 && (
               <Grid container spacing={2}>
                 {formData?.images.map((img, index) => (
