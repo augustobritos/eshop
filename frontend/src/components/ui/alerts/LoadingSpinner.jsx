@@ -1,14 +1,21 @@
-import {
-    CircularProgress,
-    Box,
-  } from "@mui/material";
+import { CircularProgress, Box } from "@mui/material";
 
-const LoadingSpinner = ({ props }) => {
+const LoadingSpinner = ({ sx, props }) => {
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", ...props }} >
-          <CircularProgress />
-        </Box>
-  )
-}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "70vh",
+        width: "100%", 
+        ...sx,
+      }}
+      {...props}
+    >
+      <CircularProgress />
+    </Box>
+  );
+};
 
 export default LoadingSpinner;
