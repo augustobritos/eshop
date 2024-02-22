@@ -3,9 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { fetchStock } from "../../redux/middlewares/stockThunk";
 
-import { Empty, LoadingSpinner, ErrorScreen } from "../ui/alerts/index.js";
 import ProductsCard from "../ui/products/ProductsCard";
-import { Button, Container, Grid, Hidden, Typography } from "@material-ui/core";
+import Categories from "./Categories.jsx";
+import { Empty, LoadingSpinner, ErrorScreen } from "../ui/alerts/index.js";
+import { Container, Grid } from "@material-ui/core";
 
 function Products() {
   const { stock, loading, error } = useSelector((state) => state.stock);
@@ -25,8 +26,7 @@ function Products() {
   }, [stock]);
 
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category); // Update selected category
-    // perform filtering products by category
+    setSelectedCategory(category);
   };
 
   const filteredStock = selectedCategory
@@ -49,29 +49,17 @@ function Products() {
     <Container maxWidth="lg">
       <Grid container spacing={2}>
         {/* Categories */}
-        <Hidden mdDown>
-          <Grid item xs={2} style={{ mt: 10 }}>
-            <Typography variant="body1" color="primary">CATEGORIAS</Typography>
-            {categories &&
-              categories.map((category) => (
-                <Button
-                  key={category.id}
-                  onClick={() => handleCategorySelect(category)}
-                  color={
-                    selectedCategory === category ? "secondary" : "inherit"
-                  }
-                  sx={{ display: "block", my: 1 }} 
-                >
-                  {category}
-                </Button>
-              ))}
-          </Grid>
-        </Hidden>
+        {categories && (
+          <Categories
+            categories={categories}
+            handleCategorySelect={handleCategorySelect}
+            selectedCategory={selectedCategory}
+          />
+        )}
 
         {/* Products */}
         <Grid item xs={12} md={categories ? 10 : 12}>
           <Grid container spacing={2}>
-            {" "}
             {/* Container for products */}
             {stock &&
               filteredStock.map((product) => (

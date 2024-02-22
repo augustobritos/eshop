@@ -2,14 +2,15 @@ import { firestore } from "../config/firebase.js";
 
 const createProduct = async (req, res, next) => {
   try {
-    const { title, description, price, quantity, images } = req.body;
+    const { title, price, quantity, category, description, images } = req.body;
     const docRef = firestore.collection("products").doc();
 
     await docRef.set({
       title,
-      description,
       price,
       quantity,
+      category,
+      description,
       images,
     });
 
@@ -50,8 +51,9 @@ const getProductById = async (req, res, next) => {
       id: doc.id,
       title: productData.title,
       price: productData.price,
-      description: productData.description,
       quantity: productData.quantity,
+      description: productData.description,
+      category: productData.category,
       images: productData.images,
     });
   } catch (error) {
@@ -62,7 +64,7 @@ const getProductById = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
   try {
-    const { title, price, quantity, description, images } = req.body;
+    const { title, price, quantity, category, description, images } = req.body;
     const id = req.params.id;
 
     const productRef = firestore.collection("products").doc(id);
@@ -71,6 +73,7 @@ const updateProduct = async (req, res, next) => {
       price: price,
       quantity: quantity,
       description: description,
+      category: category,
       images: images,
     });
 

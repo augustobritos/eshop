@@ -8,13 +8,13 @@ import {
 import { saveOrderRequest } from "../../../api/orders.api";
 
 import {
-  Container,
-  Card,
-  CardContent,
-  CircularProgress,
-  Typography,
   Box,
   Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
 } from "@mui/material";
 
 import { MercadoPagoButton } from "../../utils/MercadoPagoButton";
@@ -158,93 +158,84 @@ function Checkout({ items, total, customerData, onClick }) {
   }
 
   return (
-    <Container
-      sx={{
-        position: "relative",
-        height: "80vh",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: "10px",
-      }}
-    >
-      {loading && <LoadingSpinner props={{ mt: 10 }} />}
-      {!preferenceId && (
-        <Card
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "120px",
-            marginTop: "120px",
-          }}
-        >
-          <CardContent>
-            <Typography
-              variant="h4"
-              component="h2"
-              gutterBottom
-              style={{ textAlign: "center" }}
+    <Container maxWidth="lg">
+      <Grid container spacing={2} justifyContent="center" alignItems="center">
+        <Grid item xs={12} md={6}>
+          {loading && <LoadingSpinner props={{ mt: 10 }} />}
+          {!preferenceId && (
+            <Card sx={{ mt: 10 }}>
+              <CardContent>
+                <Typography
+                  variant="h4"
+                  component="h2"
+                  gutterBottom
+                  style={{ textAlign: "center" }}
+                >
+                  Elige tu método de pago
+                </Typography>
+
+                <Typography paragraph align="center">
+                  Aceptamos varios métodos de pago para mejorar tu experiencia.
+                </Typography>
+              </CardContent>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "20px",
+                  borderRadius: "9999px",
+                  width: "100%",
+                  marginTop: "7px",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={payWithCash}
+                >
+                  Efectivo
+                </Button>
+                {payments?.mercadopago === true && (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={payWithMercadoPago}
+                  >
+                    Mercadopago
+                  </Button>
+                )}
+                {payments?.paypal === true && (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={payWithPaypal}
+                  >
+                    Paypal
+                  </Button>
+                )}
+              </Box>
+            </Card>
+          )}
+
+          {preferenceId && (
+            <Box
+              sx={{
+                padding: "40px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              Elige tu método de pago
-            </Typography>
-
-            <Typography paragraph align="center">
-              Aceptamos varios métodos de pago para mejorar tu experiencia.
-            </Typography>
-          </CardContent>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "10px",
-              padding: "20px",
-              borderRadius: "9999px",
-              width: "100%",
-              marginTop: "7px",
-            }}
-          >
-            <Button variant="contained" color="secondary" onClick={payWithCash}>
-              Efectivo
-            </Button>
-            {payments?.mercadopago === true && (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={payWithMercadoPago}
-              >
-                Mercado Pago
-              </Button>
-            )}
-            {payments?.paypal === true && (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={payWithPaypal}
-              >
-                Paypal
-              </Button>
-            )}
-          </Box>
-        </Card>
-      )}
-
-      {preferenceId && (
-        <Box
-          sx={{
-            padding: "40px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <MercadoPagoButton
-            preferenceId={preferenceId}
-            publicKey={publicKey}
-          />
-        </Box>
-      )}
+              <MercadoPagoButton
+                preferenceId={preferenceId}
+                publicKey={publicKey}
+              />
+            </Box>
+          )}
+        </Grid>
+      </Grid>
     </Container>
   );
 }

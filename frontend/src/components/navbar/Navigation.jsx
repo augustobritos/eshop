@@ -4,15 +4,15 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 
 export const publicRoutes = [
   {
-    name: "Productos",
-    path: "/products",
-  },
-  {
     name: "Nosotros",
     path: "/about",
   },
   {
-    name: "",
+    name: "Productos",
+    path: "/products",
+  },
+  {
+    name: "Carrito",
     path: "/cart",
     icon: <ShoppingCartIcon/>,
   },
@@ -30,7 +30,11 @@ export const privateRoutes = [
     icon: <AddIcon />,
   },
   {
-    name: "Orders",
+    name: "Ordenes",
     path: "/orders"
-  }
+  },
+  {
+    name: "Perfil",
+    path: "/profile",
+  },
 ];

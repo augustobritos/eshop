@@ -43,9 +43,6 @@ function ProductList() {
     ? stock.filter((product) => product.category === selectedCategory)
     : stock;
 
-  console.log(filteredStock);
-  console.log(matchingItems.length);
-
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -73,7 +70,7 @@ function ProductList() {
             {categories &&
               categories.map((category) => (
                 <Button
-                  key={category.id}
+                  key={category}
                   onClick={() => handleCategorySelect(category)}
                   color={
                     selectedCategory === category ? "secondary" : "inherit"
