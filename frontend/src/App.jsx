@@ -46,6 +46,16 @@ function App() {
   const theme = createTheme({
     palette: {
       mode: darkMode ? "dark" : "light",
+      primary: {
+        main: "#ff5722",
+      },
+      secondary: {
+        main: "#03a9f4",
+      },
+      footer: {
+        dark: "#2E3B55",
+        light: "#19857b",
+      },
     },
   });
 
@@ -56,7 +66,7 @@ function App() {
         <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
         <Container
           sx={{
-            paddingTop: "150px",
+            mt: 10,
             minHeight: "100vh",
             display: "flex",
             flexDirection: "column",
@@ -67,9 +77,7 @@ function App() {
             <Routes>
               {/* Public - Protected Routes */}
               <Route
-                element={
-                  <ProtectedRoute isAllowed={!isAuth} redirectTo="/" />
-                }
+                element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/" />}
               >
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/signin" element={<SignIn />} />
@@ -82,7 +90,10 @@ function App() {
                 }
               >
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/orders" element={<OrdersManagement theme={theme}/>} />
+                <Route
+                  path="/orders"
+                  element={<OrdersManagement theme={theme} />}
+                />
                 <Route
                   element={
                     <ProductsProvider>
@@ -119,7 +130,7 @@ function App() {
             </Routes>
           </Grid>
         </Container>
-        <Footer darkMode={darkMode} />
+        <Footer theme={theme} />
         <WhatsappButton className="fixed bottom-4 right-4" />
       </ThemeProvider>
     </>

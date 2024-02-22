@@ -5,12 +5,10 @@ function Progression({ activeStep, onBack }) {
   const steps = ["Revisa tu compra", "Completa tu informacion", "Paga y Disfruta"];
 
   const isStepOptional = (step) => {
-    // Implement your logic for optional steps
     return false;
   };
 
   const isStepSkipped = (step) => {
-    // Implement your logic for skipped steps
     return false;
   };
 

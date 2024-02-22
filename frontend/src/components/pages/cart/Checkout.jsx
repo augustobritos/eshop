@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
+
 import { useAuth } from "../../../context/AuthContext";
 import {
   createPreferenceRequest,
   getMercadoPagoKeyRequest,
 } from "../../../api/mercadopago.api";
-
 import { saveOrderRequest } from "../../../api/orders.api";
 
-// Material UI components
 import {
   Container,
   Card,
@@ -20,6 +19,12 @@ import {
 
 import { MercadoPagoButton } from "../../utils/MercadoPagoButton";
 import { PaypalButton } from "../../utils/PaypalButton";
+import {
+  LoadingSpinner,
+  SuccessAlert,
+  WarningAlert,
+  ErrorScreen,
+} from "../../ui/alerts/index.js";
 
 function Checkout({ items, total, customerData, onClick }) {
   const { getEnabledPayments } = useAuth();
@@ -45,9 +50,16 @@ function Checkout({ items, total, customerData, onClick }) {
     fetchPayments();
   }, []);
 
-  const payWithCash = () => {
+  const payWithCash = async () => {
     onClick();
-    saveOrder();
+
+    try {
+      const orderId = await saveOrder("Efectivo");
+      console.log("orderId: ", orderId);
+    } catch (error) {
+      console.error(error);
+    }
+
     const { name, email, phone, address } = customerData;
 
     const orderMessage = items
@@ -83,12 +95,15 @@ function Checkout({ items, total, customerData, onClick }) {
     setLoading(true);
     onClick();
     try {
-      const preference = await createPreferenceRequest(items);
+      const { email } = customerData;
+      const orderId = await saveOrder("Mercadopago");
+      const data = { items, orderId, email };
+      const preference = await createPreferenceRequest(data);
       const key = await getMercadoPagoKeyRequest();
 
       if (preference && key) {
-        setPreferenceId(preference.data);
-        setPublicKey(key.data);
+        setPreferenceId(preference);
+        setPublicKey(key);
       }
     } catch (error) {
       console.error("Error processing MercadoPago payment:", error);
@@ -109,20 +124,21 @@ function Checkout({ items, total, customerData, onClick }) {
     sendEmail(customerData);
   };
 
-  const saveOrder = async () => {
+  const saveOrder = async (paymentMethod) => {
     const order = {
       customer: customerData,
       cart: items,
       total: total,
       status: "Pendiente",
+      paymentMethod: paymentMethod,
     };
 
     try {
       const res = await saveOrderRequest(order);
-
       if (!res) {
         setError(res);
       }
+      return res;
     } catch (error) {
       console.error(error);
       setError(error);
@@ -132,19 +148,6 @@ function Checkout({ items, total, customerData, onClick }) {
   const sendEmail = (customerData) => {
     console.log("Sending email to:", customerData.email);
   };
-
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="200px"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   if (error) {
     return (
@@ -164,6 +167,7 @@ function Checkout({ items, total, customerData, onClick }) {
         marginBottom: "10px",
       }}
     >
+      {loading && <LoadingSpinner props={{ mt: 10 }} />}
       {!preferenceId && (
         <Card
           sx={{

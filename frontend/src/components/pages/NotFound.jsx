@@ -3,7 +3,7 @@ import { Card, Typography, Container } from "@mui/material";
 
 function NotFound() {
   return (
-    <Container sx={{ height: "calc(100vh - 64px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <Container>
       <Card sx={{ p: 4, textAlign: "center" }}>
         <Typography variant="h1" sx={{ fontSize: "4xl", fontWeight: "bold", mb: 2 }}>
           404

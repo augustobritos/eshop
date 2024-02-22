@@ -6,7 +6,7 @@ export const fetchStock = () => async (dispatch) => {
   try {
     dispatch(fetchStockRequest());
     const response = await getProductsRequest();
-    dispatch(fetchStockSuccess(response.data));
+    dispatch(fetchStockSuccess(response));
   } catch (error) {
     dispatch(fetchStockFailure(error.message));
   }
@@ -15,7 +15,7 @@ export const fetchStock = () => async (dispatch) => {
 export const fetchProduct = async (id) => {
   try {
     const res = await getProductByIdRequest(id);
-    return res.data;
+    return res;
   } catch (error) {
     // setErrors([error.response.data.message]);
     console.error(error.message);

@@ -15,7 +15,11 @@ import {
   Grid,
 } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import Loading from "../ui/Loading";
+import {
+  LoadingSpinner,
+  SuccessAlert,
+  WarningAlert,
+} from "../ui/alerts/index.js";
 
 function ProductForm() {
   const {
@@ -39,6 +43,8 @@ function ProductForm() {
   const title = params.id ? "Editar Producto" : "Agregar Producto";
   const button = params.id ? "Actualizar" : "Agregar Producto";
   const [loading, setLoading] = useState(false);
+  const [successMessages, setSuccessMessages] = useState([]);
+  const [warningMessages, setWarningMessages] = useState([]);
 
   useEffect(() => {
     if (params.id) {
@@ -69,9 +75,18 @@ function ProductForm() {
   }, [getProductById, params.id]);
 
   const handleSubmit = async (e) => {
+    const addAlert = "Estas seguro que deseas agregar este producto?";
+    const editAlert = "Estas seguro que deseas actualizar este producto?";
+
     e.preventDefault();
-    if (!window.confirm("Estas seguro que deseas agregar este producto?")) {
-      return;
+    if (!editMode) {
+      if (!window.confirm(addAlert)) {
+        return;
+      }
+    } else {
+      if (!window.confirm(editAlert)) {
+        return;
+      }
     }
 
     if (!editMode && (!formData.images || formData.images.length === 0)) {
@@ -83,7 +98,9 @@ function ProductForm() {
 
     if (!editMode) {
       const res = await createProduct(formData);
+      console.log(res);
       if (res) {
+        setSuccessMessages((prevMessages) => [...prevMessages, res.message]);
         setFormData({
           title: "",
           price: "",
@@ -93,10 +110,9 @@ function ProductForm() {
         });
       }
     } else {
-      const product = await updateProduct(params.id, formData);
-      if (product) {
-        navigate("/admin");
-      }
+      const res = await updateProduct(params.id, formData);
+      setSuccessMessages((prevMessages) => [...prevMessages, res.message]);
+      console.log(successMessages);
     }
   };
 
@@ -158,6 +174,16 @@ function ProductForm() {
   return (
     <Container>
       <Card sx={{ p: 4 }}>
+        <Box>
+          {successMessages &&
+            successMessages.length > 0 &&
+            successMessages.map((msg, index) => (
+              <SuccessAlert key={index} message={msg} />
+            ))}
+          {warningMessages && warningMessages.length > 0 && (
+            <WarningAlert message={warningMessages} />
+          )}
+        </Box>
         <Box sx={{ mb: 2 }}>
           <Typography
             variant="h4"
@@ -227,7 +253,7 @@ function ProductForm() {
                 id="upload-button"
               />
               <label htmlFor="upload-button">
-                <Button variant="outlined" component="span">
+                <Button variant="outlined" color="secondary" component="span">
                   Seleccionar imagenes
                 </Button>
               </label>
@@ -262,7 +288,7 @@ function ProductForm() {
             <Grid item xs={12}>
               <Button
                 variant="contained"
-                color="primary"
+                color="secondary"
                 fullWidth
                 type="submit"
               >
@@ -272,7 +298,7 @@ function ProductForm() {
           </Grid>
         </form>
       </Card>
-      {loading && <Loading />}
+      {loading && <LoadingSpinner />}
     </Container>
   );
 }

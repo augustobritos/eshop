@@ -8,7 +8,6 @@ import { Container, Grid, Typography } from "@material-ui/core";
 
 function Products() {
   const { stock, loading, error } = useSelector((state) => state.stock);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,7 +22,7 @@ function Products() {
         alignItems="center"
         style={{ minHeight: "calc(100vh - 10rem)" }}
       >
-        <Typography variant="h6" color="textSecondary">
+        <Typography variant="h6" color="secondary">
           No hay productos cargados aún!
         </Typography>
       </Grid>

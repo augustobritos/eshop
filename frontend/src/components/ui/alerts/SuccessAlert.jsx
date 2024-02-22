@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Success = ({ message }) => {
+const SuccessAlert = ({ message }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
 
@@ -43,4 +43,4 @@ const Success = ({ message }) => {
   );
 };
 
-export default Success;
+export default SuccessAlert;

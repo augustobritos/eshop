@@ -12,10 +12,6 @@ export const publicRoutes = [
     path: "/about",
   },
   {
-    name: "Contacto",
-    path: "/contact",
-  },
-  {
     name: "",
     path: "/cart",
     icon: <ShoppingCartIcon/>,

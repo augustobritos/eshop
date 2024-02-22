@@ -1,19 +1,29 @@
-import { makeStyles } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Typography, Link, Hidden } from '@material-ui/core';
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Link,
+  Hidden,
+  Divider,
+} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   footer: {
-    marginTop: 'auto',
+    marginTop: "auto",
     padding: theme.spacing(2),
-    textAlign: 'center',
- },
+    textAlign: "center",
+  },
   link: {
     margin: theme.spacing(0, 1),
-    color: theme.palette.common.white,
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
     },
+  },
+  divider: {
+    backgroundColor: 'red',
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -21,21 +31,23 @@ function Footer() {
   const classes = useStyles();
 
   return (
-    <AppBar position="static" color='secondary' className={classes.footer}>
+    <AppBar position="static" color="transparent" className={classes.footer}>
       <Toolbar>
+        {/* Add the Divider at the top */}
+        <Divider className={classes.divider} />
         <Typography variant="body1" color="inherit">
           © {new Date().getFullYear()} MyStore.com | All Rights Reserved
         </Typography>
         <div style={{ flexGrow: 1 }} />
         <Hidden smDown>
-          <Link href="#" className={classes.link}>
-            Terms of Service
+          <Link href="#" className={classes.link} color="inherit">
+            Terminos del Servicio
           </Link>
-          <Link href="#" className={classes.link}>
-            Privacy Policy
+          <Link href="#" className={classes.link} color="inherit">
+            Politica de Privacidad
           </Link>
-          <Link href="#" className={classes.link}>
-            Contact Us
+          <Link href="/contact" className={classes.link} color="inherit">
+            Contactanos
           </Link>
         </Hidden>
       </Toolbar>

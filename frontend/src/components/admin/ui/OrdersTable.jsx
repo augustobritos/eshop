@@ -38,6 +38,7 @@ const OrdersTable = ({
     { id: "products", name: "Productos" },
     { id: "quantity", name: "Cantidad" },
     { id: "total", name: "Total" },
+    { id: "method", name: "Metodo" },
     { id: "status", name: "Estado" },
     { id: "timestamp", name: "Fecha" },
     { id: "actions", name: "Acciones" },
@@ -109,8 +110,8 @@ const OrdersTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredAndPagedOrders.map((order, i) => (
-              <TableRow key={i}>
+            {filteredAndPagedOrders.map((order) => (
+              <TableRow key={order.id}>
                 <TableCell>
                   {order.id.substring(15, 20)}
                   <Tooltip title="Copy ID">
@@ -130,7 +131,10 @@ const OrdersTable = ({
                 <TableCell align="left">
                   <div style={{ width: 120, maxWidth: "150px" }}>
                     {order.cart.map((product) => (
-                      <Typography key={product.id} variant="body2">
+                      <Typography
+                        key={product.id}
+                        variant="body2"
+                      >
                         {product.title}
                       </Typography>
                     ))}
@@ -138,12 +142,16 @@ const OrdersTable = ({
                 </TableCell>
                 <TableCell align="center">
                   {order.cart.map((product) => (
-                    <Typography key={product.id} variant="body2">
+                    <Typography
+                      key={`${order.id}-${product.id}`}
+                      variant="body2"
+                    >
                       {product.quantity}
                     </Typography>
                   ))}
                 </TableCell>
                 <TableCell>${order.total}</TableCell>
+                <TableCell>{order.paymentMethod}</TableCell>
                 <TableCell>{order.status}</TableCell>
                 <TableCell>{order.timestamp}</TableCell>
 

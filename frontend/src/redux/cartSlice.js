@@ -17,16 +17,11 @@ const cartSlice = createSlice({
         const existingItem = state.items[existingItemIndex];
         if (existingItem.quantity < quantity) {
           existingItem.quantity += 1;
-        } else {
-          console.log("Not enough stock available");
-        }
+        } 
       } else {
-        console.log("Item does not exist in the cart");
         if (quantity > 0) {
           state.items.push({ ...action.payload, quantity: 1 });
-        } else {
-          console.log("Not enough stock available");
-        }
+        } 
       }
     },
     removeUnitFromCart: (state, action) => {
@@ -36,14 +31,8 @@ const cartSlice = createSlice({
       if (existingItem) {
         if (existingItem.quantity > 1) {
           existingItem.quantity -= 1;
-        } else {
-          console.log("Cannot remove more units. Quantity is already zero.");
-          // Consider handling scenario where quantity is already zero
-        }
-      } else {
-        console.log("Item not found in the cart");
-        // Consider handling scenario where item is not found
-      }
+        } 
+      } 
     },    
     removeFromCart: (state, action) => {
       const { id } = action.payload;
@@ -55,12 +44,9 @@ const cartSlice = createSlice({
     updateQuantity: (state, action) => {
       const { id, quantity } = action.payload;
       const itemToUpdate = state.items.find((item) => item.id === id);
-      console.log(quantity);
       if (itemToUpdate.quantity > quantity) {
           itemToUpdate.quantity = quantity;
-        } else {
-          console.log("Not enough stock available");
-        }
+        } 
     },
   },
 });

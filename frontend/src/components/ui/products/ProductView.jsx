@@ -72,7 +72,7 @@ function ProductView() {
 
   return (
     <Container maxWidth="md">
-      <Card sx={{ mx: "auto", py: 4, boxShadow: 8 }}>
+      <Card sx={{ mx: "auto", py: 4, boxShadow: 8, mb: 10 }}>
         {loading ? (
           <Box
             sx={{
@@ -111,10 +111,10 @@ function ProductView() {
                 src={images[currentImageIndex]}
                 alt={product ? product.title : ""}
                 sx={{
-                  height:  650,
-                  maxHeight: '650px',
-                  width: 500,
-                  maxWidth: '500px',
+                  height:  500,
+                  maxHeight: '500px',
+                  width: 300,
+                  maxWidth: '300px',
                   objectFit: 'cover',
                 }}
               />

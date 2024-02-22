@@ -2,6 +2,9 @@ import { createContext, useContext, useState, useEffect } from "react";
 import cookie from "js-cookie";
 import axios from "../api/axios";
 import {
+  signUpRequest,
+  signInRequest,
+  signOutRequest,
   updateProfileRequest,
   getEnabledPaymentsRequest,
   updateEnabledPaymentsRequest,
@@ -26,10 +29,10 @@ export function AuthProvider({ children }) {
 
   const signUp = async (data) => {
     try {
-      const res = await axios.post("/signup", data);
-      setUser(res.data);
+      const res = await signUpRequest(data);
+      setUser(res);
       setIsAuth(true);
-      return res.data;
+      return res;
     } catch (error) {
       console.error(error.message);
       if (Array.isArray(error.response.data)) {
@@ -42,26 +45,27 @@ export function AuthProvider({ children }) {
 
   const signIn = async (data) => {
     try {
-      const res = await axios.post("/signin", data);
-      setUser(res.data);
+      const res = await signInRequest(data);
+      setUser(res);
       setIsAuth(true);
-      return res.data;
+      return res;
     } catch (error) {
       console.error(error.message);
       if (Array.isArray(error.response.data)) {
         return setErrors(error.response.data);
       }
-
       setErrors([error.response.data.message]);
     }
   };
 
   const signOut = async () => {
     try {
-      const res = await axios.post("/signout");
-      setUser(null);
-      setIsAuth(false);
-      return res.data;
+      const res = await signOutRequest();
+      if (res.status === 200) {
+        setUser(null);
+        setIsAuth(false);
+        return res.data;
+      }
     } catch (error) {
       console.error(error.message);
       if (Array.isArray(error.response.data)) {
@@ -74,7 +78,7 @@ export function AuthProvider({ children }) {
   const updateProfile = async (data) => {
     try {
       const res = await updateProfileRequest(data);
-      return res.data;
+      return res;
     } catch (error) {
       console.error(error.message);
       if (Array.isArray(error.response.data)) {
@@ -88,7 +92,7 @@ export function AuthProvider({ children }) {
   const getEnabledPayments = async () => {
     try {
       const res = await getEnabledPaymentsRequest();
-      return res.data;
+      return res;
     } catch (error) {
       console.error(error);
       throw error;
@@ -98,13 +102,12 @@ export function AuthProvider({ children }) {
   const updateEnabledPayments = async (payments) => {
     try {
       const res = await updateEnabledPaymentsRequest(payments);
-      return res.data;
+      return res;
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
-  
 
   useEffect(() => {
     setLoading(true);

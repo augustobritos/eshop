@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 function Empty({ message }) {
   return (
     <Typography
-      variant="h3"
+      variant="h4"
       color="text.secondary"
       align="center"
       sx={{
@@ -12,7 +12,7 @@ function Empty({ message }) {
         maxHeight: 1000,
         height: 1000,
         margin: "auto",
-        marginTop: 20,
+        mt: 20,
       }}
     >
       {message}

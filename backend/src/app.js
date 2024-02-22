@@ -7,6 +7,7 @@ import authRoutes from "./router/auth.routes.js";
 import s3Routes from "./router/s3.routes.js";
 import paymentRoutes from "./router/payment.routes.js";
 import orderRoutes from "./router/orders.routes.js";
+import webHookRoutes from "./router/webhooks.routes.js";
 
 // Libraries
 import morgan from "morgan";
@@ -37,6 +38,14 @@ app.use("/api", authRoutes);
 app.use("/api/s3", s3Routes);
 app.use("/api", paymentRoutes);
 app.use("/api", orderRoutes);
+app.use(
+  "/api",
+  cors({
+    origin: /.*\.mercadopago\.com$/,
+    methods: "POST",
+  }),
+  webHookRoutes
+);
 
 // Middleware for error for handling internal server errors
 app.use((err, req, res, next) => {

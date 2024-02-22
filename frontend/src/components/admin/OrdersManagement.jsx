@@ -8,17 +8,19 @@ import {
 import { updateStockRequest } from "../../api/products.api";
 
 import OrdersTable from "./ui/OrdersTable";
-import Loading from "../ui/Loading";
-import Success from "../ui/Success";
-import Warning from "../ui/Warning";
-import Error from "../ui/Error";
-import Empty from "./ui/Empty";
+import {
+  Empty,
+  LoadingSpinner,
+  SuccessAlert,
+  WarningAlert,
+  ErrorScreen,
+} from "../ui/alerts/index.js";
 
 const OrdersManagement = ({ theme }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [successMessages, setSuccessMessages] = useState([]);
-  const [warning, setWarning] = useState([]);
+  const [warningMessages, setWarningMessages] = useState([]);
   const [error, setError] = useState(null);
 
   const handleConfirmOrder = async (orderToUpdate) => {
@@ -36,7 +38,10 @@ const OrdersManagement = ({ theme }) => {
           updateStatusResponse.message,
         ]);
       } else {
-        setWarning("El estado no pudo ser actualizado");
+        setWarningMessages((prevMessages) => [
+          ...prevMessages,
+          "El estado de la orden no pudo ser actualizado",
+        ]);
       }
       if (updateStockResponse) {
         setSuccessMessages((prevMessages) => [
@@ -44,7 +49,10 @@ const OrdersManagement = ({ theme }) => {
           updateStockResponse.message,
         ]);
       } else {
-        setWarning("El stock no pudo ser actualizado.");
+        setWarningMessages((prevMessages) => [
+          ...prevMessages,
+          "El stock no pudo ser actualizado",
+        ]);
       }
     } catch (error) {
       console.error(error);
@@ -78,23 +86,27 @@ const OrdersManagement = ({ theme }) => {
   }, [loading, error]);
 
   if (loading) {
-    return <Loading />;
+    return <LoadingSpinner />;
   }
 
   if (error) {
-    return <Error message={error}/>;
+    return <ErrorScreen message={error} />;
   }
 
   if (!orders || orders.length === 0) {
-    return <Empty message="Aun no hay ordenes cargadas."/>;
+    return <Empty message="Aun no hay ordenes cargadas." />;
   }
 
   return (
     <>
       {successMessages &&
         successMessages.length > 0 &&
-        successMessages.map((msg, index) => <Success key={index} message={msg}/>)}
-      {warning && warning.length > 0 && <Warning message={warning} />}
+        successMessages.map((msg, index) => (
+          <SuccessAlert key={index} message={msg} />
+        ))}
+      {warningMessages && warningMessages.length > 0 && (
+        <WarningAlert message={warningMessages} />
+      )}
 
       <OrdersTable
         theme={theme}

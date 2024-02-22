@@ -29,7 +29,7 @@ export const ProductsProvider = ({ children }) => {
   const getProductById = async (id) => {
     try {
       const res = await getProductByIdRequest(id);
-      return res.data;
+      return res;
     } catch (error) {
       setErrors([error.response.data.message]);
       console.error(error.message);
@@ -40,7 +40,7 @@ export const ProductsProvider = ({ children }) => {
     try {
       const res = await createProductRequest(product);
       setProducts([...products, product]);
-      return res.data;
+      return res;
     } catch (error) {
       if (error.response.data.message) {
         setErrors([error.response.data.message]);
@@ -63,8 +63,10 @@ export const ProductsProvider = ({ children }) => {
   const deleteProduct = async (id) => {
     try {
       const res = await deleteProductRequest(id);
-      if (res.status === 204) {
+      
+      if (res && res.status === 204) {
         setProducts(products.filter((product) => product.id !== id));
+        return res;
       }
     } catch (error) {
       setErrors([error.response.data.message]);
@@ -80,16 +82,16 @@ export const ProductsProvider = ({ children }) => {
     console.log("content_type:", file.type);
 
     const response = await getSignedUrlRequest({ key, content_type });
-    
+
     await uploadFileToSignedUrlRequest(
       response.data.signedUrl,
       file,
       content_type,
       null,
-      () =>{}
+      () => {}
     );
 
-    return response.data.fileLink;  
+    return response.data.fileLink;
   };
 
   return (

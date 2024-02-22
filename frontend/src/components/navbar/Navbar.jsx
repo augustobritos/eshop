@@ -8,18 +8,19 @@ import { useAuth } from "../../context/AuthContext";
 
 import {
   AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Button,
   Avatar,
+  Box,
+  Button,
   Drawer,
+  IconButton,
+  InputBase,
+  Hidden,
   List,
   ListItemIcon,
-  ListItemText,
   ListItemButton,
-  Hidden,
-  InputBase,
+  ListItemText,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
@@ -80,7 +81,7 @@ function Navbar({ darkMode, toggleDarkMode }) {
             </IconButton>
           </Hidden>
           <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1 }}>
-            Tienda
+            Anima
           </Typography>
           <IconButton
             edge="end"

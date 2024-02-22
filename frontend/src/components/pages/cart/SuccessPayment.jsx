@@ -1,71 +1,45 @@
-import { useState, useEffect } from "react";
-import { Card, Box, Typography } from "@mui/material";
+import { Box, Card, Container, Grid, Typography } from "@mui/material";
 
 const SuccessPayment = () => {
-  const [paymentId, setPaymentId] = useState(null);
-
-  const date = new Date();
-
-  let day = date.getDate();
-  let month = date.getMonth() + 1;
-  let year = date.getFullYear();
-
-  let currentDate = `${day}-${month}-${year}`;
-
-  useEffect(() => {
-    const url = window.location.href;
-    const params = new URLSearchParams(url);
-    const paymentIdValue = params.get("payment_id");
-    setPaymentId(paymentIdValue);
-  }, []);
-
   return (
-    <Card
-      sx={{
-        maxWidth: "md",
-        mx: "auto",
-        boxShadow: "md",
-        overflow: "hidden",
-        
-      }}
-    >
-      <Box display="flex" m={1} p={1}>
-        <Box flex="none">
-          <img
-            height="80px"
-            width="100%"
-            style={{ objectFit: "cover", padding: "5px" }}
-            src="success.jpg"
-            alt="Transaction"
-          />
-        </Box>
-        <Box p={1} mt={30}>
-          <Typography
-            variant="subtitle1"
-            color="primary"
-            sx={{
-              textTransform: "uppercase",
-              fontSize: "0.875rem",
-              color: "#34D399",
-              fontWeight: "600",
-              mb: 1,
-            }}
-            gutterBottom
-          >
-            Muchas Gracias por tu Compra!
-          </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
-            Transaction ID: {paymentId}
-          </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
-            Amount: ${paymentId}
-          </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
-            {currentDate}
-          </Typography>
-        </Box>
-      </Box>
-    </Card>
+    <Container maxWidth="md" sx={{ mt: 10 }}>
+      <Card sx={{ mx: "auto", boxShadow: "md" }}>
+        <Grid container alignItems="center">
+          <Grid item xs={12} md={4}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              m={1}
+              component="img"
+              src="success.jpg"
+              style={{ objectFit: "cover", padding: "5px" }}
+              height="auto"
+              width="auto"
+            ></Box>
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Box p={1} mt={{ xs: 2, md: 0 }}>
+              <Typography
+                variant="subtitle1"
+                color="primary"
+                gutterBottom
+                textAlign="center"
+              >
+                Muchas Gracias por elegirnos!
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                textAlign="center"
+                gutterBottom
+              >
+                Pronto recibiras mas informacion de tu compra
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Card>
+    </Container>
   );
 };
 

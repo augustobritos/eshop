@@ -1,27 +1,36 @@
 import axios from "./axios";
 
 export const saveOrderRequest = async (order) => {
-  axios.post("/orders/save", order);
+  try {
+    const response = await axios.post("/orders/save", order);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const getOrdersRequest = async () => {
-  return axios.get("/orders");
+  try {
+    const response = await axios.get("/orders");
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const updateStatusRequest = async (id) => {
   try {
     const response = await axios.put(`orders/update/status/${id}`, id);
-    return response; 
+    return response.data;
   } catch (error) {
     console.error("Error updating status:", error);
-    throw error; 
+    throw error;
   }
 };
 
 export const deleteOrderRequest = async (id) => {
   try {
-    const response = await axios.delete(`/orders/delete/${id}`, id);
-    console.log(response);
+    const response = await axios.delete(`/orders/delete/${id}`);
     return response.data;
   } catch (error) {
     console.error(error);

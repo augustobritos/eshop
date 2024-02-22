@@ -1,5 +1,22 @@
 import axios from "./axios";
 
-export const createPreferenceRequest = (cart) => axios.post("/mp/preference/id", cart);
+export const createPreferenceRequest = async (data) => {
+    try {
+        const response = await axios.post("/mp/preference/id", data);
+        return response.data;
+    } catch (error) {
+        console.error("Error creando la preferencia:", error);
+        throw error;
+    }
+}
 
-export const getMercadoPagoKeyRequest = () => axios.get("/mp/key");
+export const getMercadoPagoKeyRequest = async () => {
+    try {
+        const response = await axios.get("/mp/key");
+        console.log(response);
+        return response.data;
+    } catch (error) {
+        console.error("Error creando la preferencia:", error);
+        throw error;
+    }
+} 

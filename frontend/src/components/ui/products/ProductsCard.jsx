@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { addToCart } from "../../../redux/cartSlice";
 
 import {
-  Backdrop,
   Card,
   CardActionArea,
   CardActions,
@@ -32,10 +31,10 @@ function ProductsCard({ product }) {
   };
 
   const checkStock = () => {
-    if (quantity < 1) { 
-      return true
+    if (quantity < 1) {
+      return true;
     }
-    if (!cart && quantity > 0) { 
+    if (!cart && quantity > 0) {
       console.log("true");
       return false;
     }
@@ -49,16 +48,7 @@ function ProductsCard({ product }) {
   };
 
   return (
-    <Card
-      sx={{
-        maxWidth: 300,
-        width: "100%",
-        minHeight: 400,
-        maxHeight: 400,
-        height: 400,
-        position: "relative",
-      }}
-    >
+    <Card>
       <CardActionArea onClick={handleClick}>
         <CardMedia
           component="img"
@@ -68,24 +58,10 @@ function ProductsCard({ product }) {
           sx={{ height: "200px", objectFit: "cover" }}
         />
         <CardContent>
-          <Typography
-            variant="h5"
-            component="h2"
-            sx={{
-              fontSize: { xs: "1.5rem", md: "2rem" },
-              fontWeight: "semibold",
-              textAlign: "center",
-            }}
-          >
+          <Typography variant="h5" component="h2" textAlign="center">
             {title}
           </Typography>
-          <Typography
-            sx={{
-              py: 2,
-              fontWeight: "semibold",
-              textAlign: "center",
-            }}
-          >
+          <Typography variant="body1" textAlign="center" p={2}>
             $ {price}
           </Typography>
           {quantity < 1 && (

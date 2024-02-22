@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Warning = ({ message }) => {
+const WarningAlert = ({ message }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
 
@@ -44,4 +44,4 @@ const Warning = ({ message }) => {
   );
 }
 
-export default Warning;
+export default WarningAlert;

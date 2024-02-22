@@ -1,52 +1,57 @@
-import { Box, Typography } from "@material-ui/core";
+import { Container, Box, Grid, Typography } from "@material-ui/core";
 
 const Home = () => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', marginY: '10px' }}>
-      <Typography variant="h1" component="h1">
-        Minded Crew
-      </Typography>
-
-      <Box component="img" src='yacht.jpg' alt="Wonderful" sx={{ marginBottom: '8px' }} />
-
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-        <Box sx={{ width: '100%' }}>
-          <section>
-            <Typography variant="h2" component="h2" sx={{ fontSize: '2xl', fontWeight: 'bold', marginBottom: '4px' }}>
-              Luxury & Comfort
+    <Container maxWidth="md">
+      <Box mt={4}>
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <Typography variant="h2" component="h1" align="center" p={2}>
+              Bienvenido a Anima!
             </Typography>
-            <Typography variant="body1" sx={{ fontSize: 'lg' }}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Voluptates, neque deleniti accusantium ipsa aspernatur eveniet
-              animi commodi saepe, odio fugiat
-            </Typography>
-          </section>
-        </Box>
-        <Box sx={{ width: '100%' }}>
-          <section>
-            <Typography variant="h2" component="h2" sx={{ fontSize: '2xl', fontWeight: 'bold', marginBottom: '4px' }}>
-              Our Services
-            </Typography>
-            <Typography variant="body1" sx={{ fontSize: 'lg' }}>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsam
-              assumenda laudantium illo dolorum quisquam eaque
-            </Typography>
-          </section>
-        </Box>
-        <Box sx={{ width: '100%' }}>
-          <section>
-            <Typography variant="h2" component="h2" sx={{ fontSize: '2xl', fontWeight: 'bold', marginBottom: '4px' }}>
-              Comfort and Convenience
-            </Typography>
-            <Typography variant="body1" sx={{ fontSize: 'lg' }}>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Voluptates explicabo, eligendi obcaecati praesentium qui porro ea
-              b
-            </Typography>
-          </section>
+          </Grid>
+          <Box
+            component="img"
+            src="dog.jpg"
+            alt="Wonderful"
+            style={{
+              marginTop: 20,
+              marginBottom: 20,
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          />
+        </Grid>
+        <Box>
+          <Box>
+            <section>
+              <Typography variant="h2" p={2}>
+                Nuestros Servicios
+              </Typography>
+              <Typography variant="body1" sx={{ fontSize: "lg" }}>
+                Desde estudios rutinarios, vacunaciones hasta avanzados procesos
+                .
+              </Typography>
+            </section>
+          </Box>
+          <Box style={{ marginBottom: 50 }}>
+            <section>
+              <Typography variant="h2" p={2}>
+                Nuestro Equipo
+              </Typography>
+              <Typography variant="body1" p={2}>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro
+                non enim eius, eligendi maiores nam fuga temporibus ullam
+                commodi sapiente dolores nisi dolore nulla, eaque exercitationem
+                veniam eveniet laudantium amet magnam ea deserunt iure sed!
+                Soluta qui alias cumque et?
+              </Typography>
+            </section>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </Container>
   );
 };
 

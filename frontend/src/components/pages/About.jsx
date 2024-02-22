@@ -1,4 +1,4 @@
-import { Card, Typography } from "@mui/material";
+import { Card, Container, Typography } from "@mui/material";
 
 function About() {
   const about =
@@ -11,68 +11,70 @@ function About() {
   ];
 
   return (
-    <Card sx={{ marginTop: 10, marginBottom:10 }}>
-      <Typography
-        variant="h3"
-        sx={{
-          fontWeight: "bold",
-          textAlign: "center",
-          padding: 4,
-        }}
-        gutterBottom
-      >
-        Sobre Nosotros...
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{ paddingX: 2, paddingY: 4, fontSize: "2xl" }}
-        gutterBottom
-      >
-        {about}
-      </Typography>
-      <Typography
-        variant="h4"
-        component="h2"
-        sx={{
-          fontWeight: "bold",
-          fontSize: "2xl",
-          textAlign: "center",
-          paddingTop: 4,
-          paddingBottom: 4,
-        }}
-        gutterBottom
-      >
-        Nuestros Productos
-      </Typography>
-      {products.map((tech, index) => (
-        <Typography key={index} variant="body1" sx={{ padding: 2 }}>
-          ⭐ {tech}
-        </Typography>
-      ))}
-      <Typography
-        variant="h4"
-        component="h2"
-        sx={{
-          fontWeight: "bold",
-          fontSize: "2xl",
-          textAlign: "center",
-          paddingTop: 4,
-          paddingBottom: 4,
-        }}
-        gutterBottom
-      >
-        Beneficios
-      </Typography>
-      {benefits.map((feature, index) => (
+    <Container maxWidth="md">
+      <Card sx={{ marginBottom: 10 }}>
         <Typography
-          key={index}
-          variant="body1"
-          sx={{ paddingX: 2, paddingY: 4 }}
+          variant="h3"
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            padding: 4,
+          }}
+          gutterBottom
         >
-          🐲 {feature}
+          Sobre Nosotros...
         </Typography>
-      ))}
-    </Card>
+        <Typography
+          variant="body1"
+          sx={{ paddingX: 2, paddingY: 4, fontSize: "2xl" }}
+          gutterBottom
+        >
+          {about}
+        </Typography>
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{
+            fontWeight: "bold",
+            fontSize: "2xl",
+            textAlign: "center",
+            paddingTop: 4,
+            paddingBottom: 4,
+          }}
+          gutterBottom
+        >
+          Nuestros Productos
+        </Typography>
+        {products.map((tech, index) => (
+          <Typography key={index} variant="body1" sx={{ padding: 2 }}>
+            ⭐ {tech}
+          </Typography>
+        ))}
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{
+            fontWeight: "bold",
+            fontSize: "2xl",
+            textAlign: "center",
+            paddingTop: 4,
+            paddingBottom: 4,
+          }}
+          gutterBottom
+        >
+          Beneficios
+        </Typography>
+        {benefits.map((feature, index) => (
+          <Typography
+            key={index}
+            variant="body1"
+            sx={{ paddingX: 2, paddingY: 4 }}
+          >
+            🐲 {feature}
+          </Typography>
+        ))}
+      </Card>
+    </Container>
   );
 }
 
